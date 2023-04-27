@@ -1,7 +1,11 @@
+import Image from 'next/image'
 import Head from 'next/head';
+import { Inter } from 'next/font/google';
 import { getDataFromSheets } from './libs/sheets';
 
-export default function IndexPage({ data }) {
+const inter = Inter({ subsets: ['latin'] })
+
+export default function Home({ data }) {
   return (
     <div>
       <Head>
