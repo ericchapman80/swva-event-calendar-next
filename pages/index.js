@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import Image from 'next/image'
 import Head from 'next/head';
 import { Inter } from 'next/font/google';
-import { getDataFromSheets } from './libs/sheets';
+//import { getDataFromSheets } from './libs/sheets';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from "@fullcalendar/interaction"; 
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,7 +22,7 @@ export default function Home({ data }) {
       </Head>
 
       <main>
-        <h1>SWVA Event Calendar</h1>
+        {/* <h1>SWVA Event Calendar</h1>
         <p>Example fetched from Google Spreadsheet:</p>
         <ul>
           {data && data.length ? (
@@ -32,15 +34,27 @@ export default function Home({ data }) {
           ) : (
             <li>Error: do not forget to setup your env variables 👇</li>
           )}
-        </ul>
+        </ul> */}
         <div>
           <h1>Demo App</h1>
             <FullCalendar
               plugins={[dayGridPlugin]}
+              //plugins={[timeGridPlugin, interactionPlugin]}
               initialView='dayGridMonth'
-              weekends={false}
-              events={getEventData()}
+              weekends={true}
+              events={getEventData}
               eventContent={renderEventContent}
+              header={{
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+              }}
+              /* eventClick={
+                function(arg){
+                  alert(arg.event.title)
+                  alert(arg.event.start)
+                }
+              } */
             />
         </div>
       </main>
@@ -48,7 +62,7 @@ export default function Home({ data }) {
   );
 }
 
-export async function getStaticProps(context) {
+/* export async function getStaticProps(context) {
   const sheet = await getDataFromSheets();
   return {
     props: {
@@ -56,7 +70,7 @@ export async function getStaticProps(context) {
     },
     revalidate: 1, // In seconds
   };
-}
+} */
 
 // a custom render function
 function renderEventContent(eventInfo) {
@@ -84,21 +98,23 @@ async function getEventData() {
       }
           //var newItems = [];
           dbevents.forEach(item => {
-            //var startDate = Date.parse(item.start_date) / 1000;
-            //var endDate;
-            //if (item.end_date) {
-            //  endDate = Date.parse(item.end_date);
-            //} else {
-            //  endDate = Date.parse(item.start_date);;
-            //}
+            var startDate = new Date(item.start_date);
+            var endDate;
+            if (item.end_date) {
+              endDate = new Date(item.end_date);
+            } else {
+              endDate = startDate;
+            }
             var newItem = {
               title: item.event_name,
-              start: item.start_date,
-              //end: endDate,
-              //content: item.additional_information,
-              //category: item.category,
-             // _id: item.id,
-              //_rev: item._rid
+              start: startDate,
+              end: endDate,
+              extendedProps: {
+                category: item.category,
+                location: item.location,
+                cost: item.cost,
+                additional_information: item.additional_information
+              },
             };
             events.push(newItem);
           });
@@ -107,3 +123,23 @@ async function getEventData() {
     } catch (error) {
     }
   }
+
+  //function handleEventClick(info) {
+   // const { event, jsEvent, view } = info;
+  //  console.log('Event clicked:', event);
+   // console.log('JS event:', jsEvent);
+   // console.log('View:', view);
+  
+    // You can do whatever you want with the event here, such as showing a modal
+    // or navigating to another page.
+     // $("#edit_delete").html(
+                       //   '<a href="<?php echo base_url(); ?>timetable/edit_professor_classes/'+event.id+'" style="margin-right: 5px;"><i class="fa fa-edit btn btn-success"></i></a>'+'<a href="<?php echo base_url(); ?>timetable/delete_professor_classes/'+event.id+'"><i class="fa fa-trash btn btn-danger"></i></a>'
+        //              ),
+      //$('#modalTitle').html(event.title);
+      //$('#classes').html(event.classes);
+      //$('#semester').html(event.semester);
+      //$('#subject').html(event.subject);
+      //$('#startdate').html(event.dates);
+      //$('#timestart').html(event.times);
+    // $('#fullCalModal').modal('show');
+  //}
