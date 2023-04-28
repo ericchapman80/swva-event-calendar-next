@@ -43,7 +43,7 @@ export default function Home({ data }) {
               initialView='dayGridMonth'
               weekends={true}
               events={getEventData}
-              eventContent={renderEventContent}
+              //eventContent={renderEventContent}
               header={{
                 left: 'prev,next today',
                 center: 'title',
