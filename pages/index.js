@@ -5,7 +5,11 @@ import { Inter } from 'next/font/google';
 //import { getDataFromSheets } from './libs/sheets';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from "@fullcalendar/interaction"; 
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+
+//import "@fullcalendar/core/main.css";
+//import "@fullcalendar/daygrid/main.css";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,23 +40,25 @@ export default function Home({ data }) {
           )}
         </ul> */}
         <div>
-          <h1>Demo App</h1>
+          <h1>SWVA Event Calendar</h1>
             <FullCalendar
-              plugins={[dayGridPlugin]}
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               //plugins={[timeGridPlugin, interactionPlugin]}
               initialView='dayGridMonth'
               weekends={true}
               events={getEventData}
+              displayEventTime={false}
               //eventContent={renderEventContent}
-              header={{
+              headerToolbar={{
                 left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay'
+                right: 'dayGridMonth,dayGridWeek,timeGridDay'
               }}
               /* eventClick={
                 function(arg){
                   alert(arg.event.title)
                   alert(arg.event.start)
+                  alert(arg.event.end)
                 }
               } */
             />
@@ -124,22 +130,22 @@ async function getEventData() {
     }
   }
 
-  //function handleEventClick(info) {
-   // const { event, jsEvent, view } = info;
-  //  console.log('Event clicked:', event);
-   // console.log('JS event:', jsEvent);
-   // console.log('View:', view);
+  /* function handleEventClick(info) {
+    const { event, jsEvent, view } = info;
+    console.log('Event clicked:', event);
+    console.log('JS event:', jsEvent);
+    console.log('View:', view);
   
     // You can do whatever you want with the event here, such as showing a modal
     // or navigating to another page.
-     // $("#edit_delete").html(
-                       //   '<a href="<?php echo base_url(); ?>timetable/edit_professor_classes/'+event.id+'" style="margin-right: 5px;"><i class="fa fa-edit btn btn-success"></i></a>'+'<a href="<?php echo base_url(); ?>timetable/delete_professor_classes/'+event.id+'"><i class="fa fa-trash btn btn-danger"></i></a>'
-        //              ),
-      //$('#modalTitle').html(event.title);
-      //$('#classes').html(event.classes);
-      //$('#semester').html(event.semester);
-      //$('#subject').html(event.subject);
-      //$('#startdate').html(event.dates);
-      //$('#timestart').html(event.times);
-    // $('#fullCalModal').modal('show');
-  //}
+     $("#edit_delete").html(
+                          '<a href="<?php echo base_url(); ?>timetable/edit_professor_classes/'+event.id+'" style="margin-right: 5px;"><i class="fa fa-edit btn btn-success"></i></a>'+'<a href="<?php echo base_url(); ?>timetable/delete_professor_classes/'+event.id+'"><i class="fa fa-trash btn btn-danger"></i></a>'
+                      ),
+      $('#modalTitle').html(event.title);
+      $('#classes').html(event.classes);
+      $('#semester').html(event.semester);
+      $('#subject').html(event.subject);
+      $('#startdate').html(event.dates);
+      $('#timestart').html(event.times);
+     $('#fullCalModal').modal('show');
+} */
