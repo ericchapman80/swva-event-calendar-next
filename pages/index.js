@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import Image from 'next/image'
-import Head from 'next/head';
-import { Inter } from 'next/font/google';
+import Head from 'next/head'
+import { Inter } from 'next/font/google'
 //import { getDataFromSheets } from './libs/sheets';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -48,19 +48,21 @@ export default function Home({ data }) {
               weekends={true}
               events={getEventData}
               displayEventTime={false}
+              background-color={'#white'}
+              eventColor={'gray'}
               //eventContent={renderEventContent}
               headerToolbar={{
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,dayGridWeek,timeGridDay'
               }}
-              /* eventClick={
+              eventClick={
                 function(arg){
                   alert(arg.event.title)
                   alert(arg.event.start)
                   alert(arg.event.end)
                 }
-              } */
+              }
             />
         </div>
       </main>

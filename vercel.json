@@ -1,5 +1,0 @@
-{
-    "source": "/static/*",
-    "destination": "/.next/static/[name]/[hash]"
-  }
-  
