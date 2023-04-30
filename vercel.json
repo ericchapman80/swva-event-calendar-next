@@ -1,8 +1,8 @@
 {
     "rewrites": [
       {
-        "source": "/static/*",
-        "destination": "/.next/static/css/876d048b5dab7c28"
+        //"source": "/static/*",
+        //"destination": "/.next/static/css/876d048b5dab7c28"
       }
     ]
   }
