@@ -2,7 +2,7 @@
     "rewrites": [
       {
         "source": "/static/*",
-        "destination": "/.next/static/[name]/[hash]"
+        "destination": "/.next/static/css/876d048b5dab7c28"
       }
     ]
   }
