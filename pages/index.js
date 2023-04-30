@@ -15,31 +15,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home({ data }) {
   return (
-    <div>
-      <Head>
-        <title>SWVA Event Calendar</title>
-        <meta
-          name="description"
-          content="Connecting NextJS with Google Spreadsheets as Database"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
-      <main>
-        {/* <h1>SWVA Event Calendar</h1>
-        <p>Example fetched from Google Spreadsheet:</p>
-        <ul>
-          {data && data.length ? (
-            data.map((item) => (
-              <li key={item}>
-                {item.event_name} - {item.category} - {item.location} - {item.cost} - {item.start_date} - {item.end_date}
-              </li>
-            ))
-          ) : (
-            <li>Error: do not forget to setup your env variables 👇</li>
-          )}
-        </ul> */}
-        <div>
+      <main
+      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+    >
+      
+      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1>SWVA Event Calendar</h1>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -65,8 +46,7 @@ export default function Home({ data }) {
               }
             />
         </div>
-      </main>
-    </div>
+    </main>
   );
 }
 
