@@ -27,7 +27,6 @@ export default function Home({ data }) {
               //eventClick={handleEventClick}
               //dateClick={handleDateClick}
               displayEventTime={false}
-              background-color={'#white'}
               eventColor={'gray'}
               handleWindowResize={true}
               dayMaxEvents={true}
