@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import Image from 'next/image'
+import Head from 'next/head'
 import { Inter } from 'next/font/google'
-//import { getDataFromSheets } from './libs/sheets';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -15,8 +16,7 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home({ data }) {
   return (
 
-      <main>
-      
+    <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1>SWVA Event Calendar</h1>
             <FullCalendar
