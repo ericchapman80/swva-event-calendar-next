@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import Image from 'next/image'
-import Head from 'next/head'
 import { Inter } from 'next/font/google'
 //import { getDataFromSheets } from './libs/sheets';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import ReactModal from 'react-modal';
 
 //import "@fullcalendar/core/main.css";
 //import "@fullcalendar/daygrid/main.css";
@@ -16,34 +15,38 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home({ data }) {
   return (
 
-      <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
+      <main>
       
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1>SWVA Event Calendar</h1>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              //plugins={[timeGridPlugin, interactionPlugin]}
               initialView='dayGridMonth'
               weekends={true}
               events={getEventData}
+              //eventClick={handleEventClick}
+              //dateClick={handleDateClick}
               displayEventTime={false}
               background-color={'#white'}
               eventColor={'gray'}
+              handleWindowResize={true}
+              dayMaxEvents={true}
+              //height={'100%'}
+              //mobileFriendly={true}
+              //responsive={true}
               //eventContent={renderEventContent}
               headerToolbar={{
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,dayGridWeek,timeGridDay'
               }}
-              eventClick={
+              /* eventClick={
                 function(arg){
                   alert(arg.event.title)
                   alert(arg.event.start)
                   alert(arg.event.end)
                 }
-              }
+              } */
             />
         </div>
     </main>
@@ -111,23 +114,3 @@ async function getEventData() {
     } catch (error) {
     }
   }
-
-  /* function handleEventClick(info) {
-    const { event, jsEvent, view } = info;
-    console.log('Event clicked:', event);
-    console.log('JS event:', jsEvent);
-    console.log('View:', view);
-  
-    // You can do whatever you want with the event here, such as showing a modal
-    // or navigating to another page.
-     $("#edit_delete").html(
-                          '<a href="<?php echo base_url(); ?>timetable/edit_professor_classes/'+event.id+'" style="margin-right: 5px;"><i class="fa fa-edit btn btn-success"></i></a>'+'<a href="<?php echo base_url(); ?>timetable/delete_professor_classes/'+event.id+'"><i class="fa fa-trash btn btn-danger"></i></a>'
-                      ),
-      $('#modalTitle').html(event.title);
-      $('#classes').html(event.classes);
-      $('#semester').html(event.semester);
-      $('#subject').html(event.subject);
-      $('#startdate').html(event.dates);
-      $('#timestart').html(event.times);
-     $('#fullCalModal').modal('show');
-} */
