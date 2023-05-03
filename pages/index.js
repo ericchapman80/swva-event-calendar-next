@@ -27,34 +27,19 @@ const eventCategoryList = [
 export default function Home({ data }) {
   const calendarRef =   useRef(null);
   const [screenWidth, setScreenWidth] = useState(null);
-  //const calendarEl = calendarRef.current && calendarRef.current.el;
-
-  
-  
-  /* if (calendarEl && typeof calendarEl.changeView === 'function') {
-    const screenWidth = window.innerWidth;
-    const calendarView = screenWidth > 768 ? 'dayGridMonth' : 'timeGridWeek';
-  
-    calendarEl.changeView(calendarView);
-  } */
-  
 
   //  const calendar = calendarRef.current;
 useEffect(() => {
   const handleWindowResize = () => {
-    const calendarEl = calendarRef.current && calendarRef.current.el;
+    const calendarApi = calendarRef.current.getApi();
     
-    if (calendarEl && typeof calendarEl.changeView === 'function') {
-      alert("true");
-      if (window.clientWidth < 800) {
-        calendarEl.changeView('timeGridDay');
-        //calendarEl.eventColor('red');
+    if (calendarApi) {
+      if (window.innerWidth < 800) {
+        calendarApi.changeView('dayGridWeek');
       } else {
-        calendarEl.changeView('dayGridMonth');
-        //calendarEl.eventColor('green');
+        calendarApi.changeView('dayGridMonth');
       }
-      //calendarRef.current.render(); // Re-render the calendar after updating the width
-      calendarRef.current.render(); // Re-render the calendar after updating the width
+      calendarApi.render(); // Re-render the calendar after updating the width
     }
   };
   window.addEventListener('resize', handleWindowResize);
@@ -63,13 +48,6 @@ useEffect(() => {
     window.removeEventListener('resize', handleWindowResize);
   };
 }, []);
-  
-
-
-  //Add the handleWindowResize to the eventlistner
-  if (typeof window !== 'undefined') {
-    window.addEventListener('resize', useEffect.handleWindowResize);
-  }
   
   const [category, setCategory] = useState("All", {
     initialValue: "All",
@@ -87,39 +65,37 @@ useEffect(() => {
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1>SWVA Event Calendar</h1>
-          
-          <select onChange={handleCategoryChange} value={category}>
-        {eventCategoryList.map((eventCategory) => (
-          <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
-        ))}
-      </select>
-
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView='dayGridMonth'
-              weekends={true}
-              events={getEventData}
-              //eventClick={handleEventClick}
-              //dateClick={handleDateClick}
-              displayEventTime={false}
-              eventColor={'gray'}
-              //handleWindowResize={handleWindowResize}
-              dayMaxEvents={true}
-              //eventContent={renderEventContent}
-              ref={calendarRef}
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,dayGridWeek,timeGridDay'
-              }}
-              /* eventClick={
-                function(arg){
-                  alert(arg.event.title)
-                  alert(arg.event.start)
-                  alert(arg.event.end)
-                }
-              } */
-            />
+          {/* <select onChange={handleCategoryChange} value={category}>
+            {eventCategoryList.map((eventCategory) => (
+            <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
+            ))}
+          </select> */}
+          <FullCalendar
+            ref={calendarRef} //used to reference calendar element
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView='dayGridMonth'
+            weekends={true}
+            events={getEventData}
+            //eventClick={handleEventClick}
+            //dateClick={handleDateClick}
+            displayEventTime={false}
+            eventColor={'gray'}
+            //handleWindowResize={handleWindowResize}
+            dayMaxEvents={true}
+            //eventContent={renderEventContent}
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,dayGridWeek,timeGridDay'
+            }}
+            /* eventClick={
+              function(arg){
+                alert(arg.event.title)
+                alert(arg.event.start)
+                alert(arg.event.end)
+              }
+            } */
+          />
         </div>
     </main>
   );
@@ -141,6 +117,7 @@ function renderEventContent(eventInfo) {
     <>
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
+      <i>{eventInfo.event.extendedProps.category}</i>
     </>
   )
 }
