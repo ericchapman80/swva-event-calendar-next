@@ -26,23 +26,28 @@ const eventCategoryList = [
 
 export default function Home({ data }) {
   const calendarRef =   useRef(null);
-  const [screenWidth, setScreenWidth] = useState(null);
+  //const [screenWidth, setScreenWidth] = useState(null);
 
 useEffect(() => {
+  const calendarApi = calendarRef.current.getApi();
+  
   const handleWindowResize = () => {
-    const calendarApi = calendarRef.current.getApi();
-    
-    if (calendarApi) {
-      if (window.innerWidth < 800) {
-        calendarApi.changeView('dayGridWeek');
-      } else {
-        calendarApi.changeView('dayGridMonth');
-      }
-      calendarApi.render(); // Re-render the calendar after updating the width
+    const screenWidth = window.innerWidth;
+    const calendarView = screenWidth < 800 ? 'dayGridWeek' : 'dayGridMonth';
+    if (calendarApi.view.type !== calendarView) {
+      calendarApi.changeView(calendarView);
     }
+    //Not sure if this line is still needed
+    //calendarApi.render(); // Re-render the calendar after updating the width
   };
+  
+  //Set the invitial view on mount
+  handleWindowResize();
+
+  //Attach event listner to window to handle resizing
   window.addEventListener('resize', handleWindowResize);
 
+  //Cleanup Function
   return () => {
     window.removeEventListener('resize', handleWindowResize);
   };
@@ -73,7 +78,8 @@ useEffect(() => {
           <FullCalendar
             ref={calendarRef} //used to reference calendar element
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView={screenWidth > 800 ? 'dayGridMonth' : 'timeGridWeek'}
+            //initialView={screenWidth < 800 ? 'dayGridWeek' : 'dayGridMonth'}
+            initialView={'dayGridMonth'}
             weekends={true}
             events={getEventData}
             //eventClick={handleEventClick}
