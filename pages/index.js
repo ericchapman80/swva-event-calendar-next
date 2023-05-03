@@ -28,7 +28,6 @@ export default function Home({ data }) {
   const calendarRef =   useRef(null);
   const [screenWidth, setScreenWidth] = useState(null);
 
-  //  const calendar = calendarRef.current;
 useEffect(() => {
   const handleWindowResize = () => {
     const calendarApi = calendarRef.current.getApi();
@@ -70,10 +69,11 @@ useEffect(() => {
             <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
             ))}
           </select> */}
+
           <FullCalendar
             ref={calendarRef} //used to reference calendar element
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView='dayGridMonth'
+            initialView={screenWidth > 800 ? 'dayGridMonth' : 'timeGridWeek'}
             weekends={true}
             events={getEventData}
             //eventClick={handleEventClick}
@@ -123,7 +123,8 @@ function renderEventContent(eventInfo) {
 }
 
 async function getEventData() {
-  const events = []  
+  const events = [] 
+ 
   try {
       const response = await fetch(`./api/sheets`);
       if (!response.ok) {
