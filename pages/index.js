@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
@@ -31,12 +32,13 @@ export default function Home({ data }) {
   const [screenWidth, setScreenWidth] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [eventInfo, setEventInfo] = useState(null);
+
 useEffect(() => {
   const calendarApi = calendarRef.current.getApi();
   
   const handleWindowResize = () => {
     const screenWidth = window.innerWidth;
-    const calendarView = screenWidth < 800 ? 'dayGridWeek' : 'dayGridMonth';
+    const calendarView = screenWidth < 800 ? 'listWeek' : 'dayGridMonth';
     if (calendarApi.view.type !== calendarView) {
       calendarApi.changeView(calendarView);
     }
@@ -140,11 +142,13 @@ useEffect(() => {
             <FullCalendar
               editable={true}
               selectable={true}
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              themeSystem='Standard'
+              plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
               initialView='dayGridMonth'
               weekends={true}
               events={getEventData}
               eventClick={handleEventClick}
+              navLinks={true}
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'gray'}
@@ -155,7 +159,7 @@ useEffect(() => {
               headerToolbar={{
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek,timeGridDay'
+                right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek'
               }}
               /* eventClick={
                 function(arg){
@@ -189,6 +193,25 @@ useEffect(() => {
         </p>
         <button onClick={closeModal}>Close</button>
       </Modal>
+      {/* <h2>Events</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.map((event) => (
+              <tr key={event.title}>
+                <td>{event.title}</td>
+                <td>{event.start}</td>
+                <td>{event.end}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table> */}
         </div>
     </main>
   );

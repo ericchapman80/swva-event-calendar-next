@@ -14,6 +14,7 @@
     "@fullcalendar/core": "^6.1.6",
     "@fullcalendar/daygrid": "^6.1.6",
     "@fullcalendar/interaction": "^6.1.6",
+    "@fullcalendar/list": "^6.1.6",
     "@fullcalendar/react": "^6.1.6",
     "@fullcalendar/timegrid": "^6.1.6",
     "@fullhuman/postcss-purgecss": "^5.0.0",
