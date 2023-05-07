@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
-import { Combobox } from '@headlessui/react'
+//import { Combobox } from '@headlessui/react'
 import Image from 'next/image'
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
@@ -9,8 +9,9 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import ReactModal from 'react-modal';
+import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
+import ReactDOM from 'react-dom';
 
 //import "@fullcalendar/core/main.css";
 //import "@fullcalendar/daygrid/main.css";
@@ -24,22 +25,13 @@ const eventCategoryList = [
   'Volleyball',
 ]
 
+
 export default function Home({ data }) {
   const calendarRef =   useRef(null);
   const [screenWidth, setScreenWidth] = useState(null);
-  //const calendarEl = calendarRef.current && calendarRef.current.el;
-
-  
-  
-  /* if (calendarEl && typeof calendarEl.changeView === 'function') {
-    const screenWidth = window.innerWidth;
-    const calendarView = screenWidth > 768 ? 'dayGridMonth' : 'timeGridWeek';
-  
-    calendarEl.changeView(calendarView);
-  } */
-  
-
-  //  const calendar = calendarRef.current;
+  const [isOpen, setIsOpen] = useState(false);
+  const [eventInfo, setEventInfo] = useState(null);
+ 
 useEffect(() => {
   const handleWindowResize = () => {
     const calendarEl = calendarRef.current && calendarRef.current.el;
@@ -63,8 +55,8 @@ useEffect(() => {
     window.removeEventListener('resize', handleWindowResize);
   };
 }, []);
-  
 
+  
 
   //Add the handleWindowResize to the eventlistner
   if (typeof window !== 'undefined') {
@@ -80,7 +72,60 @@ useEffect(() => {
     alert(e.target.value);
   };
 
-  //const filteredEvents = events.filter(event => event.category === category);
+  const handleEventClick = (info) => {
+    const event = info.event;
+    // Extract event information
+    var { title, start, end, extendedProps } = event;
+    // Extract extended properties
+    var { category, location, cost, additional_information } = extendedProps;
+    
+    //check for null for non-string items
+    if (start ? start = start.toString() : "");
+    if (end ? end = end.toString() : "");
+    if (cost ? cost = cost.toString() : "");
+    
+
+    setEventInfo({ title, start, end, category, location, cost, additional_information });
+    setIsOpen(true);
+
+    // Render the event information in a modal or populate a div
+    const modal = document.getElementById('eventModal');
+    modal.innerHTML = `
+      <h3>${title}</h3>
+      <p><strong>Start:</strong> ${start} - <strong>End:</strong> ${end} </p>
+      <p><strong>Category:</strong> ${event.extendedProps.category}</p>
+      <p><strong>Location:</strong> ${event.extendedProps.location}</p>
+      <p><strong>Cost:</strong> ${event.extendedProps.cost}</p>
+      <p><strong>Additional Info:</strong> ${event.extendedProps.additional_information}</p>
+    `;
+
+    // Show the modal or update the display of the div
+    modal.style.display = 'block';
+
+    // You can customize the modal closing behavior (e.g., clicking outside the modal)
+    // or close it programmatically when needed
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  // Custom styles for the modal
+  const modalStyle = {
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 9999 // Higher z-index value to ensure it appears on to
+    },
+    content: {
+      backgroundColor: '#fff',
+      border: 'none',
+      borderRadius: '4px',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+      padding: '20px',
+      color: '#333',
+      zIndex: 10000 // Higher z-index value to ensure it appears on top
+    }
+  };
 
   return (
 
@@ -93,13 +138,16 @@ useEffect(() => {
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
         ))}
       </select>
+      <div id="eventModal" style={{ display: 'none' }}></div>
 
             <FullCalendar
+              editable={true}
+              selectable={true}
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               initialView='dayGridMonth'
               weekends={true}
               events={getEventData}
-              //eventClick={handleEventClick}
+              eventClick={handleEventClick}
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'gray'}
@@ -120,20 +168,34 @@ useEffect(() => {
                 }
               } */
             />
+            <Modal
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+        contentLabel="Event Details"
+        style={modalStyle} // Apply custom styles to the modal
+      >
+        <h3>{eventInfo?.title}</h3>
+        <p>
+          <strong>Start:</strong> {eventInfo?.start} - <strong>End:</strong> {eventInfo?.end}
+        </p>
+        <p>
+          <strong>Category:</strong> {eventInfo?.category}
+        </p>
+        <p>
+          <strong>Location:</strong> {eventInfo?.location}
+        </p>
+        <p>
+          <strong>Cost:</strong> {eventInfo?.cost}
+        </p>
+        <p>
+          <strong>Additional Info:</strong> {eventInfo?.additional_information}
+        </p>
+        <button onClick={closeModal}>Close</button>
+      </Modal>
         </div>
     </main>
   );
 }
-
-/* export async function getStaticProps(context) {
-  const sheet = await getDataFromSheets();
-  return {
-    props: {
-      data: sheet.slice(0, sheet.length), // remove sheet header
-    },
-    revalidate: 1, // In seconds
-  };  
-} */
 
 // a custom render function
 function renderEventContent(eventInfo) {
@@ -185,4 +247,4 @@ async function getEventData() {
 
     } catch (error) {
     }
-  }
+  };
