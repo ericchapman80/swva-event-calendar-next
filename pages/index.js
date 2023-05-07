@@ -31,33 +31,31 @@ export default function Home({ data }) {
   const [screenWidth, setScreenWidth] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [eventInfo, setEventInfo] = useState(null);
- 
 useEffect(() => {
+  const calendarApi = calendarRef.current.getApi();
+  
   const handleWindowResize = () => {
-    const calendarEl = calendarRef.current && calendarRef.current.el;
-    
-    if (calendarEl && typeof calendarEl.changeView === 'function') {
-      alert("true");
-      if (window.clientWidth < 800) {
-        calendarEl.changeView('timeGridDay');
-        //calendarEl.eventColor('red');
-      } else {
-        calendarEl.changeView('dayGridMonth');
-        //calendarEl.eventColor('green');
-      }
-      //calendarRef.current.render(); // Re-render the calendar after updating the width
-      calendarRef.current.render(); // Re-render the calendar after updating the width
+    const screenWidth = window.innerWidth;
+    const calendarView = screenWidth < 800 ? 'dayGridWeek' : 'dayGridMonth';
+    if (calendarApi.view.type !== calendarView) {
+      calendarApi.changeView(calendarView);
     }
+    //Not sure if this line is still needed
+    //calendarApi.render(); // Re-render the calendar after updating the width
   };
+  
+  //Set the invitial view on mount
+  handleWindowResize();
+
+  //Attach event listner to window to handle resizing
   window.addEventListener('resize', handleWindowResize);
 
+  //Cleanup Function
   return () => {
     window.removeEventListener('resize', handleWindowResize);
   };
 }, []);
-
   
-
   //Add the handleWindowResize to the eventlistner
   if (typeof window !== 'undefined') {
     window.addEventListener('resize', useEffect.handleWindowResize);
@@ -131,8 +129,7 @@ useEffect(() => {
 
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-          <h1>SWVA Event Calendar</h1>
-          
+          <h1>SWVA Event Calendar</h1>          
           <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
@@ -203,12 +200,14 @@ function renderEventContent(eventInfo) {
     <>
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
+      <i>{eventInfo.event.extendedProps.category}</i>
     </>
   )
 }
 
 async function getEventData() {
-  const events = []  
+  const events = [] 
+ 
   try {
       const response = await fetch(`./api/sheets`);
       if (!response.ok) {
