@@ -234,7 +234,7 @@ useEffect(() => {
               //eventDisplay={'list-item'}
               //handleWindowResize={handleWindowResize}
               dayMaxEvents={true}
-              eventContent={renderEventContent}
+              //eventContent={renderEventContent}
               ref={calendarRef}
               //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
             />
