@@ -231,9 +231,10 @@ useEffect(() => {
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'black'}
+              //eventDisplay={'list-item'}
               //handleWindowResize={handleWindowResize}
               dayMaxEvents={true}
-              //eventContent={renderEventContent}
+              eventContent={renderEventContent}
               ref={calendarRef}
               //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
             />
@@ -285,16 +286,26 @@ useEffect(() => {
   );
 }
 
-// a custom render function
+/// Event Render Style
+const eventRenderStyle = {
+  eventTitle: {
+    whiteSpace: 'normal', /* Allow line breaks */
+    overflow: 'hidden', /* Hide overflowing text */
+    textOverflow: 'ellipsis', /* Add ellipsis (...) for long titles */
+    maxHeight: '3em', /* Limit the maximum height to three lines */
+  }
+};
+
+// A custom render function - dot is still not working - need to fix that
 function renderEventContent(eventInfo) {
   return (
-    <>
-      <b>{eventInfo.timeText}</b>
-      <i>{eventInfo.event.title}</i>
-      <i>{eventInfo.event.extendedProps.category}</i>
-    </>
-  )
-}
+    <div style={eventRenderStyle.eventTitle} className="fc-event">
+      <div className="fc-daygrid-dot"></div>
+      - {eventInfo.event.title}
+    </div>
+  );
+};
+
 
 async function getEventData() {
   const events = [] 
