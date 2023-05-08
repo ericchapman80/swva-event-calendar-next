@@ -168,6 +168,7 @@ useEffect(() => {
     }
   };
 
+  //Override Full Calendar Default Button Text
   const buttonOptions = {
     today: 'Today',
     month: 'Month',
@@ -208,7 +209,7 @@ useEffect(() => {
               buttonText={buttonOptions}
               //dateClick={handleDateClick}
               displayEventTime={false}
-              eventColor={'gray'}
+              eventColor={'black'}
               //handleWindowResize={handleWindowResize}
               dayMaxEvents={true}
               //eventContent={renderEventContent}
