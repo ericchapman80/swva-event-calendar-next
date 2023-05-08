@@ -172,7 +172,7 @@ useEffect(() => {
 
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-          <h1>SWVA Event Calendar</h1>          
+          <h1>SWVA Camps & Activities</h1>          
          {/*  <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
