@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { initGA, logPageView } from './utils/analytics';
+import { initGA, logPageView } from '../utils/analytics';
 import { useRouter } from 'next/router';
 
 
