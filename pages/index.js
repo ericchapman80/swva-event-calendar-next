@@ -124,7 +124,6 @@ useEffect(() => {
     if (start ? start = start.toString() : "");
     if (end ? end = end.toString() : "");
     if (cost ? cost = cost.toString() : "");
-    
 
     setEventInfo({ title, start, end, category, location, cost, additional_information });
     setIsOpen(true);
