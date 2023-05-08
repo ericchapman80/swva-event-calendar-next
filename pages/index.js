@@ -187,7 +187,7 @@ useEffect(() => {
           </option>
         ))}
       </select>
-      <div id="eventModal" style={{ display: 'none' }}></div>
+      {/* <div id="eventModal" style={{ display: 'none' }}></div> */}
 
             <FullCalendar
               selectable={true}
