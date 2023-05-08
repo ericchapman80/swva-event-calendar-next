@@ -168,6 +168,13 @@ useEffect(() => {
     }
   };
 
+  const buttonOptions = {
+    today: 'Today',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+  };
+
   return (
 
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
@@ -198,6 +205,7 @@ useEffect(() => {
               events={filteredEvents}
               eventClick={handleEventClick}
               navLinks={true}
+              buttonText={buttonOptions}
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'gray'}
