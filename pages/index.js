@@ -17,20 +17,56 @@ import ReactDOM from 'react-dom';
 
 const inter = Inter({ subsets: ['latin'] })
 
-const eventCategoryList = [
-  'Soccer',
-  'Track',
-  'Football',
-  'Volleyball',
-]
-
-
 export default function Home({ data }) {
   const calendarRef =   useRef(null);
   const [screenWidth, setScreenWidth] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [eventInfo, setEventInfo] = useState(null);
 
+  const [events, setEvents] = useState([]);
+  const [category, setCategory] = useState("All");
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [eventCategoryList, setEventCategoryList] = useState(["All",]);
+
+
+
+const handleCategoryChange = (e) => {
+  setCategory(e.target.value);
+};
+
+useEffect(() => {
+  const fetchEvents = async () => {
+    const eventData = await getEventData();
+    setEvents(eventData);
+
+    // Get the unique categories from the event data
+    const categories = [...new Set(eventData.map(event => event.extendedProps.category))];
+    
+    // Set the eventCategoryList state variable
+    setEventCategoryList(["All", ...categories]);
+
+    const filteredEvents = events.filter((event) => {
+      return category === 'All' || event.extendedProps.category === category;
+    });
+    setFilteredEvents(filteredEvents);
+  };
+
+    fetchEvents();
+}, [category]);
+
+useEffect(() => {
+  const fetchEvents = async () => {
+  const eventData = await getEventData();
+  setEvents(eventData);
+  setFilteredEvents(eventData);
+
+  };
+
+  //if (eventCategoryList.length === 1 && eventCategoryList[0] === 'All') {
+    fetchEvents();
+  //} 
+}, []);
+  
 useEffect(() => {
   const calendarApi = calendarRef.current.getApi();
   
@@ -77,15 +113,6 @@ useEffect(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('resize', useEffect.handleWindowResize);
   }
-  
-  const [category, setCategory] = useState("All", {
-    initialValue: "All",
-  });
-
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    alert(e.target.value);
-  };
 
   const handleEventClick = (info) => {
     const event = info.event;
@@ -147,11 +174,21 @@ useEffect(() => {
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1>SWVA Event Calendar</h1>          
-          <select onChange={handleCategoryChange} value={category}>
+         {/*  <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
         ))}
+      </select> */}
+      <span>Choose an Category: </span>
+
+      <select onChange={handleCategoryChange} value={category}>
+        {eventCategoryList.map((eventCategory) => (
+          <option key={eventCategory} value={eventCategory}>
+            {eventCategory}
+          </option>
+        ))}
       </select>
+
       <div id="eventModal" style={{ display: 'none' }}></div>
 
             <FullCalendar
@@ -160,7 +197,7 @@ useEffect(() => {
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
               initialView='dayGridMonth'
               weekends={true}
-              events={getEventData}
+              events={filteredEvents}
               eventClick={handleEventClick}
               navLinks={true}
               //dateClick={handleDateClick}
