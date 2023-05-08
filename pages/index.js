@@ -14,8 +14,6 @@ import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
 import ReactDOM from 'react-dom';
 
-//import "@fullcalendar/core/main.css";
-//import "@fullcalendar/daygrid/main.css";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -38,12 +36,29 @@ useEffect(() => {
   
   const handleWindowResize = () => {
     const screenWidth = window.innerWidth;
-    const calendarView = screenWidth < 800 ? 'listWeek' : 'dayGridMonth';
+    //const calendarView = screenWidth < 800 ? 'listWeek' : 'dayGridMonth';
+    var calendarView = 'dayGridMonth'
+    
+    if (screenWidth && screenWidth < 800) {
+      calendarApi.setOption('headerToolbar', {
+        left: 'prev,next today',
+        center: 'title',
+        end: 'timeGridDay,listWeek',
+      });
+      calendarView = 'listWeek'
+    } else {
+      calendarApi.setOption('headerToolbar', {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
+      });
+      calendarView = 'dayGridMonth'
+    }
+
     if (calendarApi.view.type !== calendarView) {
       calendarApi.changeView(calendarView);
     }
-    //Not sure if this line is still needed
-    //calendarApi.render(); // Re-render the calendar after updating the width
+    calendarApi.render(); // Re-render the calendar after updating the width
   };
   
   //Set the invitial view on mount
@@ -140,7 +155,6 @@ useEffect(() => {
       <div id="eventModal" style={{ display: 'none' }}></div>
 
             <FullCalendar
-              editable={true}
               selectable={true}
               themeSystem='Standard'
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
@@ -156,43 +170,32 @@ useEffect(() => {
               dayMaxEvents={true}
               //eventContent={renderEventContent}
               ref={calendarRef}
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek'
-              }}
-              /* eventClick={
-                function(arg){
-                  alert(arg.event.title)
-                  alert(arg.event.start)
-                  alert(arg.event.end)
-                }
-              } */
+              //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
             />
             <Modal
-        isOpen={isOpen}
-        onRequestClose={closeModal}
-        contentLabel="Event Details"
-        style={modalStyle} // Apply custom styles to the modal
-      >
-        <h3>{eventInfo?.title}</h3>
-        <p>
-          <strong>Start:</strong> {eventInfo?.start} - <strong>End:</strong> {eventInfo?.end}
-        </p>
-        <p>
-          <strong>Category:</strong> {eventInfo?.category}
-        </p>
-        <p>
-          <strong>Location:</strong> {eventInfo?.location}
-        </p>
-        <p>
-          <strong>Cost:</strong> {eventInfo?.cost}
-        </p>
-        <p>
-          <strong>Additional Info:</strong> {eventInfo?.additional_information}
-        </p>
-        <button onClick={closeModal}>Close</button>
-      </Modal>
+              isOpen={isOpen}
+              onRequestClose={closeModal}
+              contentLabel="Event Details"
+              style={modalStyle} // Apply custom styles to the modal
+            >
+              <h3>{eventInfo?.title}</h3>
+              <p>
+                <strong>Start:</strong> {eventInfo?.start} - <strong>End:</strong> {eventInfo?.end}
+              </p>
+              <p>
+                <strong>Category:</strong> {eventInfo?.category}
+              </p>
+              <p>
+                <strong>Location:</strong> {eventInfo?.location}
+              </p>
+              <p>
+                <strong>Cost:</strong> {eventInfo?.cost}
+              </p>
+              <p>
+                <strong>Additional Info:</strong> {eventInfo?.additional_information}
+              </p>
+              <button onClick={closeModal}>Close</button>
+            </Modal>
       {/* <h2>Events</h2>
         <table>
           <thead>
