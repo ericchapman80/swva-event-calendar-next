@@ -151,6 +151,24 @@ useEffect(() => {
     setIsOpen(false);
   };
 
+  //Custom style for Header / Title
+    const headerTitleStyle = {
+      h1:{
+
+        fontFamily: 'Chalkduster, fantasy',
+        fontSize: '40px',
+        textAlign: 'center',
+        marginBottom: '5px', // Adjust the value as needed
+      },
+      h2:{
+        fontFamily: 'DejaVu Sans Mono, monospace',
+        fontSize: '20px',
+        textAlign: 'center',
+        fontWeight: 'normal', // Remove the bold style
+        marginTop: '0', // Reset the default margin if necessary
+      }
+    };
+  
   // Custom styles for the modal
   const modalStyle = {
     overlay: {
@@ -170,23 +188,27 @@ useEffect(() => {
 
   //Override Full Calendar Default Button Text
   const buttonOptions = {
+    prev: 'Prev',
+    next: 'Next',
     today: 'Today',
     month: 'Month',
     week: 'Week',
     day: 'Day',
+    list: 'List',
   };
 
   return (
 
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-          <h1>SWVA Camps & Activities</h1>          
+          <h1 style={headerTitleStyle.h1}>SWVA</h1>
+          <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>          
          {/*  <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
         ))}
       </select> */}
-      <span>Choose an Category: </span>
+      <span>Choose a Category: </span>
 
       <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
