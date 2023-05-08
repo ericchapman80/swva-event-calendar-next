@@ -28,8 +28,6 @@ export default function Home({ data }) {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [eventCategoryList, setEventCategoryList] = useState(["All",]);
 
-
-
 const handleCategoryChange = (e) => {
   setCategory(e.target.value);
 };
@@ -41,6 +39,7 @@ useEffect(() => {
 
     // Get the unique categories from the event data
     const categories = [...new Set(eventData.map(event => event.extendedProps.category))];
+    categories.sort();
     
     // Set the eventCategoryList state variable
     setEventCategoryList(["All", ...categories]);
@@ -188,7 +187,6 @@ useEffect(() => {
           </option>
         ))}
       </select>
-
       <div id="eventModal" style={{ display: 'none' }}></div>
 
             <FullCalendar
