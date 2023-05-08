@@ -1,7 +1,7 @@
 import ReactGA from 'react-ga';
 
 export const initGA = () => {
-  ReactGA.initialize('G-GM8GH5GV3C');
+  ReactGA.initialize(process.env.NEXT_PUBLIC_MEASUREMENT_ID);
 };
 
 export const logPageView = () => {

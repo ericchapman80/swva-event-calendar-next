@@ -9,7 +9,6 @@ import "@fullcalendar/common/main.min.css";
 //import "@fullcalendar/timegrid/main.css";
 
 
-
 export default function App({ Component, pageProps }) {
   const router = useRouter();
 
@@ -29,7 +28,7 @@ export default function App({ Component, pageProps }) {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, []);
+  }, [router.events]);
 
 
   return <Component {...pageProps} />

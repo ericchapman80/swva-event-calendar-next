@@ -51,7 +51,7 @@ useEffect(() => {
   };
 
     fetchEvents();
-}, [category]);
+}, [events, category]);
 
 useEffect(() => {
   const fetchEvents = async () => {
@@ -64,7 +64,7 @@ useEffect(() => {
   //if (eventCategoryList.length === 1 && eventCategoryList[0] === 'All') {
     fetchEvents();
   //} 
-}, []);
+}, [events]);
   
 useEffect(() => {
   const calendarApi = calendarRef.current.getApi();
