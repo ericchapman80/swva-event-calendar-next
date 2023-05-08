@@ -208,7 +208,7 @@ useEffect(() => {
           <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
         ))}
       </select> */}
-      <span>Choose a Category: </span>
+      <span>List Events By Category: </span>
 
       <select onChange={handleCategoryChange} value={category}>
         {eventCategoryList.map((eventCategory) => (
