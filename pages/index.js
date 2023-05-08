@@ -298,10 +298,29 @@ const eventRenderStyle = {
 
 // A custom render function - dot is still not working - need to fix that
 function renderEventContent(eventInfo) {
+  // Determine the current calendar view
+  const calendarView = eventInfo.view.type;
+
+  // Set the class name for the dot based on the calendar view
+  let dotClassName = "fc-daygrid-dot";
+  if (calendarView === "dayGridMonth") {
+    dotClassName += " fc-daygrid-dot-month";
+  } else if (calendarView === "timeGridWeek") {
+    dotClassName += " fc-daygrid-dot-week";
+  } else if (calendarView === "timeGridDay") {
+    dotClassName += " fc-daygrid-dot-day";
+  }
+
+  //Add a hyphen if not in listWeek
+  var eventTitleString = eventInfo.event.title;
+  if (calendarView !== 'listWeek'){
+    eventTitleString = '-' + eventTitleString;
+  }
+
   return (
     <div style={eventRenderStyle.eventTitle} className="fc-event">
-      <div className="fc-daygrid-dot"></div>
-      - {eventInfo.event.title}
+      <div className={dotClassName}></div>
+      {eventTitleString}
     </div>
   );
 };
