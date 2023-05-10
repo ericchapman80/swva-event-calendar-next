@@ -134,7 +134,7 @@ useEffect(() => {
       return; // no need to render innerHTML
     } else {
       eventTable.innerHTML = `
-        <h2>${category} Events</h2>
+        <h2 align=center>${category} Events</h2>
         <table border=1 width=100%>
           <thead>
             <tr>
@@ -298,7 +298,10 @@ useEffect(() => {
         </select>
       </div>
     </div>
-      <div id="eventTable" style={{ display: 'none' }}></div>
+      <div id="eventTable" style={{ display: 'none'}}>
+        <br></br>
+        <br></br>
+      </div>
 
             <FullCalendar
               selectable={true}
