@@ -1,0 +1,16 @@
+/* calendar.css */
+
+.fc-toolbar-title {
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    font-family: Optima;
+    /* Add other desired styles */
+  }
+
+  .fc-event-title {
+    white-space: normal; /* Allow line breaks */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis (...) for long titles */
+    max-height: 3em; /* Limit the maximum height to three lines */
+  }
+  

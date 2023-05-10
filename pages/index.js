@@ -1,9 +1,11 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 //import { Combobox } from '@headlessui/react'
 import Image from 'next/image'
 import Head from 'next/head'
+import moment from 'moment';
 import { Inter } from 'next/font/google'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -12,8 +14,7 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
-import ReactDOM from 'react-dom';
-
+import { Table } from "@nextui-org/react";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -48,6 +49,7 @@ useEffect(() => {
       return category === 'All' || event.extendedProps.category === category;
     });
     setFilteredEvents(filteredEvents);
+    updateEventTable(filteredEvents);
   };
 
     fetchEvents();
@@ -113,6 +115,105 @@ useEffect(() => {
     window.addEventListener('resize', useEffect.handleWindowResize);
   }
 
+  const updateEventTable = (categorizedEvents) => {
+    // Check if categorizedEvents exists or is an empty array
+    if (!categorizedEvents || categorizedEvents.length === 0) {
+      //const eventTable = document.getElementById('eventTable');
+      //eventTable.innerHTML = '';
+      //eventTable.style.display = 'none';
+      return;
+    }
+  
+    // Render the event information in a modal or populate a div
+    const eventTable = document.getElementById('eventTable');
+  
+    if (category === "All") {
+      //eventTable = document.getElementById('eventTable')
+      eventTable.innerHTML = '';
+      eventTable.style.display = 'none';
+      return; // no need to render innerHTML
+    } else {
+      eventTable.innerHTML = `
+        <h2>${category} Events</h2>
+        <table border=1 width=100%>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Location</th>
+              <th>Cost</th>
+              <th>Additional Information</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${categorizedEvents
+              .map(
+                (eventItemByCategory) => `
+                  <tr key="${eventItemByCategory?.title}">
+                    <td>${eventItemByCategory?.title}</td>
+                    <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</td>
+                    <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</td>
+                    <td>${eventItemByCategory.extendedProps?.location}</td>
+                    <td>${eventItemByCategory.extendedProps?.cost}</td>
+                    <td>${eventItemByCategory.extendedProps?.additional_information}</td>
+                  </tr>
+                `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+  
+      // Show the modal or update the display of the div
+      eventTable.style.display = 'block';
+    }
+  };
+
+/*   const updateEventTable = (categorizedEvents) => {
+    if (!categorizedEvents || categorizedEvents.length === 0) {
+      return;
+    }
+  
+    const eventTable = document.getElementById('eventTable');
+  
+    if (category === "All") {
+      eventTable.innerHTML = '';
+      eventTable.style.display = 'none';
+      return;
+    } else {
+      const tableRows = categorizedEvents.map((eventItemByCategory) => (
+        <TableRow key={eventItemByCategory?.title}>
+          <TableCell>{eventItemByCategory?.title}</TableCell>
+          <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</TableCell>
+          <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
+        </TableRow>
+      ));
+  
+      setTimeout(() => {
+        ReactDOM.render(
+          <Table striped sticked aria-label="Event table" selectionMode="multiple" css={{ height: "auto", minWidth: "100%" }}>
+            <Table.Header>
+              <Table.Column>Title</Table.Column>
+              <Table.Column>Start</Table.Column>
+              <Table.Column>End</Table.Column>
+              <Table.Column>Location</Table.Column>
+              <Table.Column>Cost</Table.Column>
+              <Table.Column>Additional Information</Table.Column>
+            </Table.Header>
+            <Table.Body>{tableRows}</Table.Body>
+          </Table>,
+          eventTable
+        );
+      }, 0);
+  
+      eventTable.style.display = 'block';
+    }
+  }; */
+    
   const handleEventClick = (info) => {
     const event = info.event;
     // Extract event information
@@ -127,23 +228,6 @@ useEffect(() => {
 
     setEventInfo({ title, start, end, category, location, cost, additional_information });
     setIsOpen(true);
-
-    // Render the event information in a modal or populate a div
-    const modal = document.getElementById('eventModal');
-    modal.innerHTML = `
-      <h3>${title}</h3>
-      <p><strong>Start:</strong> ${start} - <strong>End:</strong> ${end} </p>
-      <p><strong>Category:</strong> ${event.extendedProps.category}</p>
-      <p><strong>Location:</strong> ${event.extendedProps.location}</p>
-      <p><strong>Cost:</strong> ${event.extendedProps.cost}</p>
-      <p><strong>Additional Info:</strong> ${event.extendedProps.additional_information}</p>
-    `;
-
-    // Show the modal or update the display of the div
-    modal.style.display = 'block';
-
-    // You can customize the modal closing behavior (e.g., clicking outside the modal)
-    // or close it programmatically when needed
   };
 
   const closeModal = () => {
@@ -201,22 +285,18 @@ useEffect(() => {
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1 style={headerTitleStyle.h1}>SWVA</h1>
-          <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>          
-         {/*  <select onChange={handleCategoryChange} value={category}>
-        {eventCategoryList.map((eventCategory) => (
-          <option key={eventCategory} value={eventCategory}>{eventCategory}</option>
-        ))}
-      </select> */}
-      <span>List Events By Category: </span>
+          <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>
 
-      <select onChange={handleCategoryChange} value={category}>
-        {eventCategoryList.map((eventCategory) => (
-          <option key={eventCategory} value={eventCategory}>
-            {eventCategory}
-          </option>
-        ))}
-      </select>
-      {/* <div id="eventModal" style={{ display: 'none' }}></div> */}
+          <span>List Events By Category: </span>
+
+          <select onChange={handleCategoryChange} value={category}>
+            {eventCategoryList.map((eventCategory) => (
+              <option key={eventCategory} value={eventCategory}>
+                {eventCategory}
+              </option>
+            ))}
+          </select>
+      <div id="eventTable" style={{ display: 'none' }}></div>
 
             <FullCalendar
               selectable={true}
@@ -237,6 +317,7 @@ useEffect(() => {
               //eventContent={renderEventContent}
               ref={calendarRef}
               //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
+              //titleFormat={titleFormatHandler} 
             />
             <Modal
               isOpen={isOpen}
@@ -262,25 +343,6 @@ useEffect(() => {
               </p>
               <button onClick={closeModal}>Close</button>
             </Modal>
-      {/* <h2>Events</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((event) => (
-              <tr key={event.title}>
-                <td>{event.title}</td>
-                <td>{event.start}</td>
-                <td>{event.end}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
         </div>
     </main>
   );
@@ -296,26 +358,35 @@ const eventRenderStyle = {
   }
 };
 
-// A custom render function - dot is still not working - need to fix that
+/* function titleFormatHandler(eventInfo) {
+  const eventTitle = eventInfo.event && eventInfo.event.title;
+  const isLongTitle = eventTitle && eventTitle.length > 15;
+  alert(eventTitle);
+
+  if (isLongTitle) {
+    alert(eventTitle);
+    return eventTitle.replace(/\s+/g, '<br>');
+  }
+  return eventTitle;
+}; */
+
+// A custom render function
 function renderEventContent(eventInfo) {
   // Determine the current calendar view
   const calendarView = eventInfo.view.type;
 
-  // Set the class name for the dot based on the calendar view
-  let dotClassName = "fc-daygrid-dot";
-  if (calendarView === "dayGridMonth") {
-    dotClassName += " fc-daygrid-dot-month";
-  } else if (calendarView === "timeGridWeek") {
-    dotClassName += " fc-daygrid-dot-week";
-  } else if (calendarView === "timeGridDay") {
-    dotClassName += " fc-daygrid-dot-day";
-  }
+  // Define the class names for each calendar view
+  const dotClassNames = {
+    dayGridMonth: "fc-daygrid-dot fc-daygrid-dot-month",
+    timeGridWeek: "fc-daygrid-dot fc-daygrid-dot-week",
+    timeGridDay: "fc-daygrid-dot fc-daygrid-dot-day",
+  };
 
-  //Add a hyphen if not in listWeek
-  var eventTitleString = eventInfo.event.title;
-  if (calendarView !== 'listWeek'){
-    eventTitleString = '-' + eventTitleString;
-  }
+  // Set the class name for the dot based on the calendar view
+  const dotClassName = dotClassNames[calendarView] || "fc-daygrid-dot";
+
+  // Add a hyphen if not in listWeek
+  const eventTitleString = calendarView !== 'listWeek' ? '-' + eventInfo.event.title : eventInfo.event.title;
 
   return (
     <div style={eventRenderStyle.eventTitle} className="fc-event">
@@ -323,7 +394,7 @@ function renderEventContent(eventInfo) {
       {eventTitleString}
     </div>
   );
-};
+}
 
 
 async function getEventData() {
@@ -368,3 +439,5 @@ async function getEventData() {
     } catch (error) {
     }
   };
+
+  
