@@ -286,16 +286,18 @@ useEffect(() => {
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
           <h1 style={headerTitleStyle.h1}>SWVA</h1>
           <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>
-
-          <span>List Events By Category: </span>
-
-          <select onChange={handleCategoryChange} value={category}>
-            {eventCategoryList.map((eventCategory) => (
-              <option key={eventCategory} value={eventCategory}>
-                {eventCategory}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: "flex", justifyContent: "center", height: "8vh" }}>
+      <div>
+        <span>List Events By Category: </span>
+        <select onChange={handleCategoryChange} value={category}>
+          {eventCategoryList.map((eventCategory) => (
+            <option key={eventCategory} value={eventCategory}>
+              {eventCategory}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
       <div id="eventTable" style={{ display: 'none' }}></div>
 
             <FullCalendar
