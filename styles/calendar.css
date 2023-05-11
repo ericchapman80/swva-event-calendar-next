@@ -13,4 +13,9 @@
     text-overflow: ellipsis; /* Add ellipsis (...) for long titles */
     max-height: 3em; /* Limit the maximum height to three lines */
   }
-  
+
+  .fc-toolbar-chunk {
+    /* Add your custom styles here */
+    text-align: center;
+    /* Add more custom styles as needed */
+  }

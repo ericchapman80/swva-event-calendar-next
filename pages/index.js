@@ -80,16 +80,17 @@ useEffect(() => {
       calendarApi.setOption('headerToolbar', {
         //left: 'prev,next today',
         //end: 'timeGridDay,listWeek',
-        left: 'prev',
-        center: 'title',
-        end: 'next',
+        left: '',
+        center: 'title,prev,next',
+        end: '',
       });
       calendarView = 'listWeek'
     } else {
       calendarApi.setOption('headerToolbar', {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
+        //right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
+        right: 'dayGridMonth,dayGridWeek,listWeek',
       });
       calendarView = 'dayGridMonth'
     }
@@ -315,6 +316,7 @@ useEffect(() => {
               eventClick={handleEventClick}
               navLinks={true}
               buttonText={buttonOptions}
+              //headerToolbar={false}
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'black'}
