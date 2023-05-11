@@ -288,7 +288,7 @@ useEffect(() => {
           <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>
           <div style={{ display: "flex", justifyContent: "center", height: "8vh" }}>
       <div>
-        <span>List Events By Category: </span>
+        <span>Events By Category: </span>
         <select onChange={handleCategoryChange} value={category}>
           {eventCategoryList.map((eventCategory) => (
             <option key={eventCategory} value={eventCategory}>
