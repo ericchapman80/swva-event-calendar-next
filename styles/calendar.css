@@ -1,5 +1,20 @@
 /* calendar.css */
 
+h1 {
+    font-family: "Chalkduster", fantasy;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 5px; /* Adjust the value as needed */
+  }
+
+  h2 {
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 20px;
+    text-align: center;
+    font-weight: normal;
+    margin-top: 0;
+  }  
+
 .fc-toolbar-title {
     font-weight: bold;
     color: rgb(0, 0, 0);
@@ -18,4 +33,8 @@
     /* Add your custom styles here */
     text-align: center;
     /* Add more custom styles as needed */
+  }
+
+  :root {
+    --fc-button-bg-color: #000000; /* Black color */
   }

@@ -84,6 +84,12 @@ useEffect(() => {
         center: 'title,prev,next',
         end: '',
       });
+      /* calendarApi.setOption('footerToolbar', {
+        left: 'prev',
+        center: '',
+        //right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
+        right: 'next',
+      }); */
       calendarView = 'listWeek'
     } else {
       calendarApi.setOption('headerToolbar', {
@@ -237,23 +243,6 @@ useEffect(() => {
     setIsOpen(false);
   };
 
-  //Custom style for Header / Title
-    const headerTitleStyle = {
-      h1:{
-
-        fontFamily: 'Chalkduster, fantasy',
-        fontSize: '40px',
-        textAlign: 'center',
-        marginBottom: '5px', // Adjust the value as needed
-      },
-      h2:{
-        fontFamily: 'DejaVu Sans Mono, monospace',
-        fontSize: '20px',
-        textAlign: 'center',
-        fontWeight: 'normal', // Remove the bold style
-        marginTop: '0', // Reset the default margin if necessary
-      }
-    };
   
   // Custom styles for the modal
   const modalStyle = {
@@ -287,8 +276,8 @@ useEffect(() => {
 
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-          <h1 style={headerTitleStyle.h1}>SWVA</h1>
-          <h2 style={headerTitleStyle.h2}>CAMPS & ACTIVITIES</h2>
+          <h1>SWVA</h1>
+          <h2>CAMPS & ACTIVITIES</h2>
           <div style={{ display: "flex", justifyContent: "center", height: "8vh" }}>
       <div>
         <span>Events By Category: </span>
@@ -317,6 +306,7 @@ useEffect(() => {
               navLinks={true}
               buttonText={buttonOptions}
               //headerToolbar={false}
+              //footerToolbar={true}
               //dateClick={handleDateClick}
               displayEventTime={false}
               eventColor={'black'}
