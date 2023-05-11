@@ -79,10 +79,10 @@ useEffect(() => {
     if (screenWidth && screenWidth < 800) {
       calendarApi.setOption('headerToolbar', {
         //left: 'prev,next today',
-        left: 'prev,next',
-        center: 'title',
         //end: 'timeGridDay,listWeek',
-        end: 'listWeek',
+        left: 'prev',
+        center: 'title',
+        end: 'next',
       });
       calendarView = 'listWeek'
     } else {
