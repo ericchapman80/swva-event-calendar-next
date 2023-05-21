@@ -1,6 +1,8 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import { useEffect, useState } from 'react';
 import { useRef } from 'react';
+import moment from 'moment';
 //import { Combobox } from '@headlessui/react'
 import Image from 'next/image'
 import Head from 'next/head'
@@ -12,7 +14,7 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
-import ReactDOM from 'react-dom';
+//import { Table } from "@nextui-org/react";
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -48,6 +50,7 @@ useEffect(() => {
       return category === 'All' || event.extendedProps.category === category;
     });
     setFilteredEvents(filteredEvents);
+    updateEventTable(filteredEvents);
   };
 
     fetchEvents();
@@ -113,6 +116,59 @@ useEffect(() => {
     window.addEventListener('resize', useEffect.handleWindowResize);
   }
 
+  const updateEventTable = (categorizedEvents) => {
+    //Check if categoriedEvents exist or is an empty array
+    if (!categorizedEvents || categorizedEvents.length == 0) {
+      return;
+    }
+
+    //Render the event information in a modal or populate a div
+    const eventTable = document.getElementById('eventTable');
+
+    if (category === "All") {
+      eventTable.innerHTML = '';
+      eventTable.style.display = 'none';
+      return; //no need to render innerHTML
+    }
+    else {
+      eventTable.innerHTML = `
+        <h2>${category} Events</h2>
+        <table border=1 width=100%>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Location</th>
+              <th>Cost</th>
+              <th>Additional Information</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${categorizedEvents
+              .map(
+                (eventItemByCategory) => `
+                  <tr key="${eventItemByCategory?.title}">
+                    <td>${eventItemByCategory?.title}</td>
+                    <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</td>
+                    <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</td>
+                    <td>${eventItemByCategory.extendedProps?.location}</td>
+                    <td>${eventItemByCategory.extendedProps?.cost}</td>
+                    <td>${eventItemByCategory.extendedProps?.additional_information}</td>
+                  </tr>
+                `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+
+      // Show the modal or update the display of the div
+      eventTable.style.display = 'block';
+      return;
+    }
+  };
+  
   const handleEventClick = (info) => {
     const event = info.event;
     // Extract event information
