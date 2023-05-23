@@ -1,0 +1,32 @@
+/* calendar.css */
+
+h1 {
+    font-family: "Chalkduster", fantasy;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 5px; /* Adjust the value as needed */
+  }
+
+  h2 {
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 20px;
+    text-align: center;
+    font-weight: normal;
+    margin-top: 0;
+  }  
+
+.fc-toolbar-title {
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  } 
+
+  .fc-toolbar-chunk {
+    text-align: center;
+  }
+
+  :root {
+    --fc-button-bg-color: #000000; /* Black color */
+    --fc-button-hover-bg-color: gray;
+    --fc-button-active-bg-color: gray;
+  }
