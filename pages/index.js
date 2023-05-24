@@ -418,7 +418,7 @@ async function getEventData() {
             if (item.end_date) {
               endDate = new Date(item.end_date);
             } else {
-              endDate = startDate;
+              endDate = startDate //TODO -do I need this + 86400000; // Add 1 day to the end date
             }
             var newItem = {
               title: item.event_name,
