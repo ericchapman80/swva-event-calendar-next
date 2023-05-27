@@ -438,5 +438,3 @@ async function getEventData() {
     } catch (error) {
     }
   };
-
-  
