@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { initGA, logPageView } from '../analytics';
 import { useRouter } from 'next/router';
-
+import { useGA4React } from 'ga-4-react';
 
 //import '../styles/globals.css'
 import "@fullcalendar/common/main.min.css";
@@ -12,6 +12,7 @@ import '../styles/calendar.css'; // Import the custom CSS file
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const ga4React = useGA4React();
 
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
@@ -20,22 +21,17 @@ export default function App({ Component, pageProps }) {
     }
 
     const handleRouteChange = (url) => {
-      logPageView();
+      if (ga4React.isInitialized()) {
+        ga4React.pageview(url);
+      } else {
+        logPageView(); // Fallback to the previous GA implementation
+      }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
 
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
-
-  useEffect(() => {
-    logPageView(); // Initial page view
-
-    return () => {
-      // Clean up the event listener
-      router.events.off('routeChangeComplete', logPageView);
     };
   }, []); // Run only once on initial render
 
