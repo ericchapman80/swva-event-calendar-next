@@ -29,45 +29,35 @@ export default function Home({ data }) {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [eventCategoryList, setEventCategoryList] = useState(["All",]);
 
-const handleCategoryChange = (e) => {
-  setCategory(e.target.value);
-};
 
-useEffect(() => {
-  const fetchEvents = async () => {
-    const eventData = await getEventData();
-    setEvents(eventData);
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
 
-    // Get the unique categories from the event data
-    const categories = [...new Set(eventData.map(event => event.extendedProps.category))];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const eventData = await getEventData();
+      setEvents(eventData);
+      setFilteredEvents(eventData);
+    };
+
+    if (events.length === 0) {
+      fetchEvents();
+    }
+  }, []);
+
+  useEffect(() => {
+    const categories = [...new Set(events.map((event) => event.extendedProps.category))];
     categories.sort();
-    
-    // Set the eventCategoryList state variable
     setEventCategoryList(["All", ...categories]);
 
-    const filteredEvents = events.filter((event) => {
-      return category === 'All' || event.extendedProps.category === category;
-    });
+    const filteredEvents = events.filter(
+      (event) => category === "All" || event.extendedProps.category === category
+    );
     setFilteredEvents(filteredEvents);
     updateEventTable(filteredEvents);
-  };
+  }, [category, events]);
 
-    fetchEvents();
-}, [category]);
-
-useEffect(() => {
-  const fetchEvents = async () => {
-  const eventData = await getEventData();
-  setEvents(eventData);
-  setFilteredEvents(eventData);
-
-  };
-
-  //if (eventCategoryList.length === 1 && eventCategoryList[0] === 'All') {
-    fetchEvents();
-  //} 
-}, []);
-  
 useEffect(() => {
   const calendarApi = calendarRef.current.getApi();
   
@@ -305,6 +295,7 @@ useEffect(() => {
               eventClick={handleEventClick}
               navLinks={true}
               buttonText={buttonOptions}
+              nextDayThreshold={'00:00:00'}
               //headerToolbar={false}
               //footerToolbar={true}
               //dateClick={handleDateClick}
