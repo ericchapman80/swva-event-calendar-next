@@ -14,7 +14,8 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
-import { Table } from "@nextui-org/react";
+//import { Table } from "@nextui-org/react";
+import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -113,7 +114,7 @@ useEffect(() => {
     window.addEventListener('resize', useEffect.handleWindowResize);
   }
 
-  const updateEventTable = (categorizedEvents) => {
+  /* const updateEventTable = (categorizedEvents) => {
     // Check if categorizedEvents exists or is an empty array
     if (!categorizedEvents || categorizedEvents.length === 0) {
       //const eventTable = document.getElementById('eventTable');
@@ -166,52 +167,52 @@ useEffect(() => {
       // Show the modal or update the display of the div
       eventTable.style.display = 'block';
     }
-  };
-
-/*   const updateEventTable = (categorizedEvents) => {
-    if (!categorizedEvents || categorizedEvents.length === 0) {
-      return;
-    }
-  
-    const eventTable = document.getElementById('eventTable');
-  
-    if (category === "All") {
-      eventTable.innerHTML = '';
-      eventTable.style.display = 'none';
-      return;
-    } else {
-      const tableRows = categorizedEvents.map((eventItemByCategory) => (
-        <TableRow key={eventItemByCategory?.title}>
-          <TableCell>{eventItemByCategory?.title}</TableCell>
-          <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</TableCell>
-          <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
-        </TableRow>
-      ));
-  
-      setTimeout(() => {
-        ReactDOM.render(
-          <Table striped sticked aria-label="Event table" selectionMode="multiple" css={{ height: "auto", minWidth: "100%" }}>
-            <Table.Header>
-              <Table.Column>Title</Table.Column>
-              <Table.Column>Start</Table.Column>
-              <Table.Column>End</Table.Column>
-              <Table.Column>Location</Table.Column>
-              <Table.Column>Cost</Table.Column>
-              <Table.Column>Additional Information</Table.Column>
-            </Table.Header>
-            <Table.Body>{tableRows}</Table.Body>
-          </Table>,
-          eventTable
-        );
-      }, 0);
-  
-      eventTable.style.display = 'block';
-    }
   }; */
-    
+
+const updateEventTable = (categorizedEvents) => {
+  if (!categorizedEvents || categorizedEvents.length === 0) {
+    return;
+  }
+
+  const eventTable = document.getElementById('eventTable');
+
+  if (category === 'All') {
+    eventTable.innerHTML = '';
+    eventTable.style.display = 'none';
+    return;
+  } else {
+    const tableRows = categorizedEvents.map((eventItemByCategory) => (
+      <TableRow key={eventItemByCategory?.title}>
+        <TableCell>{eventItemByCategory?.title}</TableCell>
+        <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</TableCell>
+        <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</TableCell>
+        <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
+        <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
+        <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
+      </TableRow>
+    ));
+
+    ReactDOM.render(
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Title</TableCell>
+            <TableCell>Start</TableCell>
+            <TableCell>End</TableCell>
+            <TableCell>Location</TableCell>
+            <TableCell>Cost</TableCell>
+            <TableCell>Additional Information</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>{tableRows}</TableBody>
+      </Table>,
+      eventTable
+    );
+
+    eventTable.style.display = 'block';
+  }
+};
+   
   const handleEventClick = (info) => {
     const event = info.event;
     // Extract event information
@@ -282,32 +283,47 @@ useEffect(() => {
       <div id="eventTable" style={{ display: 'none'}}>
         <br></br>
         <br></br>
+        <Table id="eventTable" style={{ display: 'none' }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell>Start</TableCell>
+              <TableCell>End</TableCell>
+              <TableCell>Location</TableCell>
+              <TableCell>Cost</TableCell>
+              <TableCell>Additional Information</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody></TableBody>
+        </Table>
       </div>
+      <br></br>
+      <br></br>
 
-            <FullCalendar
-              selectable={true}
-              themeSystem='Standard'
-              plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-              initialView='dayGridMonth'
-              weekends={true}
-              events={filteredEvents}
-              eventClick={handleEventClick}
-              navLinks={true}
-              buttonText={buttonOptions}
-              //nextDayThreshold={'00:00:00'}
-              //headerToolbar={false}
-              //footerToolbar={true}
-              //dateClick={handleDateClick}
-              displayEventTime={false}
-              eventColor={'black'}
-              //eventDisplay={'list-item'}
-              //handleWindowResize={handleWindowResize}
-              dayMaxEvents={true}
-              //eventContent={renderEventContent}
-              ref={calendarRef}
-              //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
-              //titleFormat={titleFormatHandler} 
-            />
+          <FullCalendar
+            selectable={true}
+            themeSystem='Standard'
+            plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+            initialView='dayGridMonth'
+            weekends={true}
+            events={filteredEvents}
+            eventClick={handleEventClick}
+            navLinks={true}
+            buttonText={buttonOptions}
+            //nextDayThreshold={'00:00:00'}
+            //headerToolbar={false}
+            //footerToolbar={true}
+            //dateClick={handleDateClick}
+            displayEventTime={false}
+            eventColor={'black'}
+            //eventDisplay={'list-item'}
+            //handleWindowResize={handleWindowResize}
+            dayMaxEvents={true}
+            //eventContent={renderEventContent}
+            ref={calendarRef}
+            //headerToolbar - being dynamically set based on screenWidth for more mobile friendly experience
+            //titleFormat={titleFormatHandler} 
+          />
             <Modal
               isOpen={isOpen}
               onRequestClose={closeModal}
