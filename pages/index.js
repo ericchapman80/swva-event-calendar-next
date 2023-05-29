@@ -152,9 +152,9 @@ useEffect(() => {
                     <td>${eventItemByCategory?.title}</td>
                     <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</td>
                     <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</td>
-                    <td>${eventItemByCategory.extendedProps?.location}</td>
-                    <td>${eventItemByCategory.extendedProps?.cost}</td>
-                    <td>${eventItemByCategory.extendedProps?.additional_information}</td>
+                    <td>${eventItemByCategory.extendedProps?.location ? eventItemByCategory.extendedProps.location : ''}</td>
+                    <td>${eventItemByCategory.extendedProps?.cost ? eventItemByCategory.extendedProps.cost : ''}</td>
+                    <td>${eventItemByCategory.extendedProps?.additional_information ? eventItemByCategory.extendedProps.additional_information : '' }</td>
                   </tr>
                 `
               )
