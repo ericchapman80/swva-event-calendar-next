@@ -29,7 +29,6 @@ export default function Home({ data }) {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [eventCategoryList, setEventCategoryList] = useState(["All",]);
 
-
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
@@ -295,7 +294,7 @@ useEffect(() => {
               eventClick={handleEventClick}
               navLinks={true}
               buttonText={buttonOptions}
-              nextDayThreshold={'00:00:00'}
+              //nextDayThreshold={'00:00:00'}
               //headerToolbar={false}
               //footerToolbar={true}
               //dateClick={handleDateClick}

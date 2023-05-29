@@ -1,18 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { initGA, logPageView } from '../analytics';
 import { useRouter } from 'next/router';
-import { useGA4React } from 'ga-4-react';
+import CookieConsent from 'react-cookie-consent';
+import Cookies from 'universal-cookie';
 
-//import '../styles/globals.css'
-import "@fullcalendar/common/main.min.css";
-//import "@fullcalendar/daygrid/main.css";
-//import "@fullcalendar/timegrid/main.css";
-
-import '../styles/calendar.css'; // Import the custom CSS file
+import '@fullcalendar/common/main.min.css';
+import '../styles/calendar.css';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
-  const ga4React = useGA4React();
+  const [cookieConsentGiven, setCookieConsentGiven] = useState(false);
+  const cookies = new Cookies();
 
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
@@ -21,19 +19,53 @@ export default function App({ Component, pageProps }) {
     }
 
     const handleRouteChange = (url) => {
-      if (ga4React.isInitialized()) {
-        ga4React.pageview(url);
-      } else {
-        logPageView(); // Fallback to the previous GA implementation
+      if (cookieConsentGiven && window.gtag) {
+        logPageView();
       }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
 
-    return () => {
+    return () => {  
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, []); // Run only once on initial render
+  }, [cookieConsentGiven]); // Add cookieConsentGiven as a dependency
 
-  return <Component {...pageProps} />;
+  useEffect(() => {
+    const consent = cookies.get('cookieConsent') === 'true';
+    setCookieConsentGiven(consent);
+  }, [cookies]);
+
+  const handleCookieConsent = () => {
+    cookies.set('cookieConsent', 'true', { path: '/' });
+    setCookieConsentGiven(true);
+  };
+
+  const handleDenyCookieConsent = () => {
+    cookies.set('cookieConsent', 'false', { path: '/' });
+    setCookieConsentGiven(false);
+  };
+
+  return (
+    <>
+      <Component {...pageProps} />
+      <CookieConsent
+        enableDeclineButton='true'
+        flipButtons='true'
+        location='bottom'
+        buttonText='I Agree'
+        declineButtonText='No Thanks'
+        cookieName='cookieConsent'
+        style={{ background: '#2B373B' }}
+        buttonStyle={{ color: '#FFFFFF', fontSize: '13px', background: '#000000' }}
+        declineButtonStyle={{ color: '#FFFFFF', fontSize: '13px', background: '#000000' }}
+        expires={365}
+        onAccept={handleCookieConsent}
+        onDecline={handleDenyCookieConsent}
+      >
+        This website uses cookies to enhance our user experience, site navigation, and to analyze site usage.
+      </CookieConsent>
+    </>
+  );
+  //TODO: Add link to Privacy Policy
 }
