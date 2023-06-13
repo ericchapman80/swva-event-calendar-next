@@ -16,6 +16,7 @@
     "@fullcalendar/interaction": "^6.1.6",
     "@fullcalendar/list": "^6.1.6",
     "@fullcalendar/react": "^6.1.6",
+    "@fullcalendar/rrule": "^6.1.7",
     "@fullcalendar/timegrid": "^6.1.6",
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@headlessui/react": "^1.7.14",
@@ -33,7 +34,8 @@
     "react": "18.2.0",
     "react-dom": "^18.2.0",
     "react-ga": "^3.3.1",
-    "react-modal": "^3.16.1"
+    "react-modal": "^3.16.1",
+    "rrule": "^2.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^9.8.6",

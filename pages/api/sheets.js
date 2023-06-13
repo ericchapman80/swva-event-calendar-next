@@ -22,8 +22,10 @@ async function handler(req, res) {
 
     const rows = response.data.values;
     const mappedData = rows.map((row) => ({
-      start_date: row[0] ? moment(row[0], 'M/D/YYYY H:mm:ss').toDate() : null,
-      end_date: row[1] ? moment(row[1], 'M/D/YYYY H:mm:ss').toDate() : null,
+      //start_date: row[0] ? moment(row[0], 'M/D/YYYY H:mm:ss').toDate() : null,
+      //end_date: row[1] ? moment(row[1], 'M/D/YYYY H:mm:ss').toDate() : null,
+      start_date: row[0] || null,
+      end_date: row[1] || null,
       category: row[2] || null,
       event_name: row[3] || null,
       location: row[4] || null,

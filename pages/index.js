@@ -12,9 +12,11 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
+import rrulePlugin from '@fullcalendar/rrule'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
 import { Table } from "@nextui-org/react";
+import { rrulestr } from 'rrule';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -95,8 +97,8 @@ useEffect(() => {
       calendarApi.setOption('headerToolbar', {
         left: 'prev,next today',
         center: 'title',
-        //right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
-        right: 'dayGridMonth,dayGridWeek,listWeek',
+        right: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek',
+        //right: 'dayGridMonth,dayGridWeek,listWeek',
       });
       calendarView = 'dayGridMonth'
     }
@@ -161,8 +163,8 @@ useEffect(() => {
                 (eventItemByCategory) => `
                   <tr key="${eventItemByCategory?.title}">
                     <td>${eventItemByCategory?.title}</td>
-                    <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</td>
-                    <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</td>
+                    <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm').local()}</td>
+                    <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm').local()}</td>
                     <td>${eventItemByCategory.extendedProps?.location}</td>
                     <td>${eventItemByCategory.extendedProps?.cost}</td>
                     <td>${eventItemByCategory.extendedProps?.additional_information}</td>
@@ -298,7 +300,7 @@ useEffect(() => {
             <FullCalendar
               selectable={true}
               themeSystem='Standard'
-              plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
+              plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, rrulePlugin]}
               initialView='dayGridMonth'
               weekends={true}
               events={filteredEvents}
@@ -395,48 +397,62 @@ function renderEventContent(eventInfo) {
   );
 }
 
+function generateRecurrence(start, end) {
+  const duration = moment.duration(end.diff(start));
+  const days = duration.asDays();
+
+  if (days > 0) {
+    const rruleString = `DTSTART:${start.format('YYYYMMDD[T]HHmmss')}\nRRULE:FREQ=DAILY;COUNT=${days + 1}`;
+    return rruleString;
+  }
+
+  return null;
+}
 
 async function getEventData() {
-  const events = [] 
- 
+  const events = [];
+
   try {
-      const response = await fetch(`./api/sheets`);
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const result = await response.json();
-
-      var dbevents = result.mappedData;
-      //remove header row from sheet
-      if (dbevents) {
-        dbevents.shift();
-      }
-          //var newItems = [];
-          dbevents.forEach(item => {
-            var startDate = new Date(item.start_date);
-            var endDate;
-            if (item.end_date) {
-              endDate = new Date(item.end_date);
-            } else {
-              endDate = startDate //TODO -do I need this + 86400000; // Add 1 day to the end date
-            }
-            var newItem = {
-              title: item.event_name,
-              start: startDate,
-              end: endDate,
-              extendedProps: {
-                category: item.category,
-                location: item.location,
-                cost: item.cost,
-                additional_information: item.additional_information
-              },
-            };
-            events.push(newItem);
-          });
-          return events;
-
-    } catch (error) {
+    const response = await fetch('./api/sheets');
+    if (!response.ok) {
+      throw new Error(response.statusText);
     }
-  };
+    const result = await response.json();
 
-  
+    const dbevents = result.mappedData;
+    // Remove header row from sheet
+    if (dbevents) {
+      dbevents.shift();
+    }
+
+    dbevents.forEach(item => {
+      const startDate = moment(item.start_date, 'M/D/YYYY H:mm:ss').local();
+      const endDate = moment(item.end_date, 'M/D/YYYY H:mm:ss').local();
+
+      const recurrence = generateRecurrence(startDate, endDate);
+
+      const newItem = {
+        title: item.event_name,
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
+        extendedProps: {
+          category: item.category,
+          location: item.location,
+          cost: item.cost,
+          additional_information: item.additional_information,
+        },
+      };
+
+      if (recurrence) {
+        newItem.recurrenceRule = rrulestr(recurrence);
+      }
+
+      events.push(newItem);
+    });
+
+    return events;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
