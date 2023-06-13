@@ -1,5 +1,17 @@
 import { google } from 'googleapis';
 
+export const config = {
+  api: {
+    externalResolver: true,
+    cache: {
+      enabled: true,
+      // Set the cache duration (in seconds) according to your requirements
+      duration: 60 * 60, // 1 hour
+      key: 'my-google-sheets-data', // Set a unique cache key
+    },
+  },
+};
+
 async function handler(req, res) {
   try {
     if (req.method === 'GET') {
