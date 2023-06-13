@@ -51,8 +51,14 @@ export default function Home({ data }) {
     categories.sort();
     setEventCategoryList(["All", ...categories]);
 
-    const filteredEvents = events.filter(
+    const currentDate = new Date(); // Get the current date
+    /* const filteredEvents = events.filter(
       (event) => category === "All" || event.extendedProps.category === category
+    ); */
+    const filteredEvents = events.filter(
+      (event) =>
+        (category === "All" || event.extendedProps.category === category) && // Check category
+        (new Date(event.end) > currentDate) // Check end date
     );
     setFilteredEvents(filteredEvents);
     updateEventTable(filteredEvents);
