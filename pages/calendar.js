@@ -1,11 +1,15 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import fetch from 'node-fetch';
 
 function CalendarPage() {
   useEffect(() => {
     async function fetchEvents() {
-      const response = await fetch('./api/sheets');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sheets`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
 
       const eventArray = data.mappedData.map((event) => ({
