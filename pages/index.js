@@ -114,7 +114,7 @@ useEffect(() => {
     window.addEventListener('resize', useEffect.handleWindowResize);
   }
 
-  const updateEventTable = (categorizedEvents) => {
+/*   const updateEventTable = (categorizedEvents) => {
     // Check if categorizedEvents exists or is an empty array
     if (!categorizedEvents || categorizedEvents.length === 0) {
       //const eventTable = document.getElementById('eventTable');
@@ -167,9 +167,9 @@ useEffect(() => {
       // Show the modal or update the display of the div
       eventTable.style.display = 'block';
     }
-  };
+  }; */
 
-/* const updateEventTable = (categorizedEvents) => {
+const updateEventTable = (categorizedEvents) => {
   if (!categorizedEvents || categorizedEvents.length === 0) {
     return;
   }
@@ -211,8 +211,8 @@ useEffect(() => {
 
     eventTable.style.display = 'block';
   }
-}; */
-   
+};
+  
   const handleEventClick = (info) => {
     const event = info.event;
     // Extract event information
