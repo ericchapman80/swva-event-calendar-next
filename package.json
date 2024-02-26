@@ -40,7 +40,7 @@
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
     "react-modal": "^3.16.1",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^7.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.8.6",
