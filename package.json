@@ -19,7 +19,7 @@
     "@fullcalendar/list": "^6.1.6",
     "@fullcalendar/react": "^6.1.6",
     "@fullcalendar/timegrid": "^6.1.6",
-    "@fullhuman/postcss-purgecss": "^5.0.0",
+    "@fullhuman/postcss-purgecss": "^6.0.0",
     "@headlessui/react": "^1.7.14",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.3",
