@@ -115,21 +115,20 @@ useEffect(() => {
   }
 
   const updateEventTable = (categorizedEvents) => {
-// Check if categorizedEvents exists or is an empty array
+    // Check if categorizedEvents exists or is an empty array
     if (!categorizedEvents || categorizedEvents.length === 0) {
       return;
     }
-
-// Render the event information in a modal or populate a div
+  
+    // Render the event information in a modal or populate a div
     const eventTable = document.getElementById('eventTable');
-
+  
     if (category === "All") {
-      //eventTable.innerHTML = '';
       eventTable.style.display = 'none';
       return; // no need to render innerHTML
     } else {
       const currentDate = new Date();
-      //Filter out events that are not in the future
+      // Filter out events that are not in the future
       const tableRows = categorizedEvents
         .filter((eventItemByCategory) => {
           const eventDate = new Date(eventItemByCategory.start);
@@ -150,7 +149,8 @@ useEffect(() => {
             <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
           </TableRow>
         ));
-
+  
+      if (tableRows.length > 0) {
         ReactDOM.render(
           <TableContainer component={Paper}>
             <Table>
@@ -173,77 +173,17 @@ useEffect(() => {
           </TableContainer>,
           eventTable
         );
-    
+  
         eventTable.style.display = 'block';
-
-      // Render the table rows
-      /* eventTable.innerHTML = `
-        <h2 align=center>${category} Events</h2>
-        <table border=1 width=100%>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Start</th>
-              <th>End</th>
-              <th>Location</th>
-              <th>Cost</th>
-              <th>Additional Information</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows.join('')}
-          </tbody>
-        </table>
-      `; */
-
-      // Show the modal or update the display of the div
-      eventTable.style.display = 'block';
+      } else {
+        ReactDOM.render(
+          <div style={{ textAlign: 'center' }}>No scheduled items for the selected category: {category}</div>,
+          eventTable
+        );
+        eventTable.style.display = 'block';
+      }
     }
   };
-
-/* const updateEventTable = (categorizedEvents) => {
-  if (!categorizedEvents || categorizedEvents.length === 0) {
-    return;
-  }
-
-  const eventTable = document.getElementById('eventTable');
-
-  if (category === 'All') {
-    eventTable.innerHTML = '';
-    eventTable.style.display = 'none';
-    return;
-  } else {
-    const tableRows = categorizedEvents.map((eventItemByCategory) => (
-      <TableRow key={eventItemByCategory?.title}>
-        <TableCell>{eventItemByCategory?.title}</TableCell>
-        <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</TableCell>
-        <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</TableCell>
-        <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
-        <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
-        <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
-      </TableRow>
-    ));
-
-    ReactDOM.render(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Start</TableCell>
-            <TableCell>End</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell>Cost</TableCell>
-            <TableCell>Additional Information</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{tableRows}</TableBody>
-      </Table>,
-      eventTable
-    );
-
-    eventTable.style.display = 'block';
-  }
-}; */
    
   const handleEventClick = (info) => {
     const event = info.event;
