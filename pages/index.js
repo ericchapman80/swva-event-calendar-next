@@ -15,7 +15,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import Modal from 'react-modal';
 import { Calendar } from '@fullcalendar/core'
 //import { Table } from "@nextui-org/react";
-import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, TablePagination } from '@mui/material';
+import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, TablePagination, Paper } from '@mui/material';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -115,24 +115,69 @@ useEffect(() => {
   }
 
   const updateEventTable = (categorizedEvents) => {
-    // Check if categorizedEvents exists or is an empty array
+// Check if categorizedEvents exists or is an empty array
     if (!categorizedEvents || categorizedEvents.length === 0) {
-      //const eventTable = document.getElementById('eventTable');
-      //eventTable.innerHTML = '';
-      //eventTable.style.display = 'none';
       return;
     }
-  
-    // Render the event information in a modal or populate a div
+
+// Render the event information in a modal or populate a div
     const eventTable = document.getElementById('eventTable');
-  
+
     if (category === "All") {
-      //eventTable = document.getElementById('eventTable')
-      eventTable.innerHTML = '';
+      //eventTable.innerHTML = '';
       eventTable.style.display = 'none';
       return; // no need to render innerHTML
     } else {
-      eventTable.innerHTML = `
+      const currentDate = new Date();
+      //Filter out events that are not in the future
+      const tableRows = categorizedEvents
+        .filter((eventItemByCategory) => {
+          const eventDate = new Date(eventItemByCategory.start);
+          return (
+            eventItemByCategory.extendedProps?.category === category &&
+            eventDate >= currentDate
+          );
+        })
+        .map((eventItemByCategory) => (
+          <TableRow key={eventItemByCategory?.title}>
+            <TableCell>{eventItemByCategory?.title}</TableCell>
+            <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY')}</TableCell>
+            <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY')}</TableCell>
+            <TableCell>{moment(eventItemByCategory?.start).format('h:mm A')}</TableCell>
+            <TableCell>{moment(eventItemByCategory?.end).format('h:mm A')}</TableCell>
+            <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
+            <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
+            <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
+          </TableRow>
+        ));
+
+        ReactDOM.render(
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Title</TableCell>
+                  <TableCell>Start</TableCell>
+                  <TableCell>End</TableCell>
+                  <TableCell>Start Time</TableCell>
+                  <TableCell>End Time</TableCell>
+                  <TableCell>Location</TableCell>
+                  <TableCell>Cost</TableCell>
+                  <TableCell>Additional Information</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableRows}
+              </TableBody>
+            </Table>
+          </TableContainer>,
+          eventTable
+        );
+    
+        eventTable.style.display = 'block';
+
+      // Render the table rows
+      /* eventTable.innerHTML = `
         <h2 align=center>${category} Events</h2>
         <table border=1 width=100%>
           <thead>
@@ -146,24 +191,11 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody>
-            ${categorizedEvents
-              .map(
-                (eventItemByCategory) => `
-                  <tr key="${eventItemByCategory?.title}">
-                    <td>${eventItemByCategory?.title}</td>
-                    <td>${moment(eventItemByCategory?.start).format('MM-DD-YYYY HH:mm')}</td>
-                    <td>${moment(eventItemByCategory?.end).format('MM-DD-YYYY HH:mm')}</td>
-                    <td>${eventItemByCategory.extendedProps?.location ? eventItemByCategory.extendedProps.location : ''}</td>
-                    <td>${eventItemByCategory.extendedProps?.cost ? eventItemByCategory.extendedProps.cost : ''}</td>
-                    <td>${eventItemByCategory.extendedProps?.additional_information ? eventItemByCategory.extendedProps.additional_information : '' }</td>
-                  </tr>
-                `
-              )
-              .join('')}
+            ${tableRows.join('')}
           </tbody>
         </table>
-      `;
-  
+      `; */
+
       // Show the modal or update the display of the div
       eventTable.style.display = 'block';
     }
@@ -219,13 +251,16 @@ useEffect(() => {
     var { title, start, end, extendedProps } = event;
     // Extract extended properties
     var { category, location, cost, additional_information } = extendedProps;
-    
+
+    // Format the date
+    let formattedStartDate = FormatDate(start);
+    let formattedEndDate = FormatDate(end);
     //check for null for non-string items
-    if (start ? start = start.toString() : "");
-    if (end ? end = end.toString() : "");
+    if (formattedStartDate ? formattedStartDate = formattedStartDate.toString() : "");
+    if (formattedEndDate ? formattedEndDate = formattedEndDate.toString() : "");
     if (cost ? cost = cost.toString() : "");
 
-    setEventInfo({ title, start, end, category, location, cost, additional_information });
+    setEventInfo({ title, formattedStartDate, formattedEndDate, category, location, cost, additional_information });
     setIsOpen(true);
   };
 
@@ -332,7 +367,7 @@ useEffect(() => {
             >
               <h3>{eventInfo?.title}</h3>
               <p>
-                <strong>Start:</strong> {eventInfo?.start} - <strong>End:</strong> {eventInfo?.end}
+                <strong>Start:</strong> {eventInfo?.formattedStartDate} - <strong>End:</strong> {eventInfo?.formattedEndDate}
               </p>
               <p>
                 <strong>Category:</strong> {eventInfo?.category}
@@ -362,6 +397,22 @@ const eventRenderStyle = {
     maxHeight: '3em', /* Limit the maximum height to three lines */
   }
 };
+
+function FormatDate(rawDate) {
+  let formattedDate = '';
+  if (rawDate) {
+    const date = moment(rawDate);
+    if (date.isValid()) {
+      formattedDate = date.format('ddd MM-DD-YY hh:mm a');
+    } else {
+      formattedDate = "Invalid Date";
+    }
+  } else {
+    //No Date Provided - Render Null
+    formattedDate = "";
+  }
+  return formattedDate;
+}
 
 /* function titleFormatHandler(eventInfo) {
   const eventTitle = eventInfo.event && eventInfo.event.title;
