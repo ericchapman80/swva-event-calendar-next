@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { initGA, logPageView } from '../analytics';
 import { useRouter } from 'next/router';
 import CookieConsent from 'react-cookie-consent';
@@ -10,7 +10,7 @@ import '../styles/calendar.css';
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const [cookieConsentGiven, setCookieConsentGiven] = useState(false);
-  const cookies = new Cookies();
+  const cookies = useMemo(() => new Cookies(), []);
 
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }) {
     return () => {  
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [cookieConsentGiven]); // Add cookieConsentGiven as a dependency
+  }, [cookieConsentGiven, router.events]); // Add cookieConsentGiven and router.events as dependencies
 
   useEffect(() => {
     const consent = cookies.get('cookieConsent') === 'true';
