@@ -24,7 +24,9 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Environment Variables
+### Environment Variables
+
+Ensure your environment variables are correctly set for both local and deployed environments. You can use `.env.local` for local development and set the environment variables in your deployment platform (e.g., Vercel).
 
 The following environment variables are used in this project:
 

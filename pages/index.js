@@ -328,7 +328,7 @@ export default function Home({ data }) {
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
-          timeZone='UTC'  // Ensure FullCalendar reads event times as UTC
+          timeZone='UTC' // Ensure FullCalendar uses UTC
         />
         <Modal
           isOpen={isOpen}
