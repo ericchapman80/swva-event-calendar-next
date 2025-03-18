@@ -1,3 +1,10 @@
+/* Import Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any custom global styles here */
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;

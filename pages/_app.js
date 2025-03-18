@@ -3,9 +3,12 @@ import { initGA, logPageView } from '../analytics';
 import { useRouter } from 'next/router';
 import CookieConsent from 'react-cookie-consent';
 import Cookies from 'universal-cookie';
+import Navbar from '../components/Navbar';
+import Head from 'next/head';
 
 import '@fullcalendar/common/main.min.css';
 import '../styles/calendar.css';
+import '../styles/global.css'; // Import global CSS
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -48,6 +51,10 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Navbar />
       <Component {...pageProps} />
       <CookieConsent
         enableDeclineButton='true'
