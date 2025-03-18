@@ -333,9 +333,9 @@ const eventRenderStyle = {
 function FormatDate(rawDate) {
   let formattedDate = '';
   if (rawDate) {
-    const date = moment(rawDate);
+    const date = moment.utc(rawDate); // Use UTC to parse the date
     if (date.isValid()) {
-      formattedDate = date.format('ddd MM-DD-YY hh:mm a');
+      formattedDate = date.local().format('ddd MM-DD-YY hh:mm a'); // Convert to local time
     } else {
       formattedDate = "Invalid Date";
     }
@@ -398,14 +398,14 @@ async function getEventData() {
 
       var newItem = {
         title: item.event_name,
-        start: startDate.toISOString(),
-        end: endDate.toISOString(),
+        start: moment(startDate).local().format(),
+        end: moment(endDate).local().format(),
         extendedProps: {
           category: item.category,
           location: item.location,
           cost: item.cost,
           additional_information: item.additional_information
-        },
+        }
       };
       events.push(newItem);
     });
