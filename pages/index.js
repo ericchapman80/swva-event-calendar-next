@@ -18,6 +18,21 @@ import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Table
 
 const inter = Inter({ subsets: ['latin'] })
 
+const DEBUG_LEVEL = process.env.NEXT_PUBLIC_DEBUG || 'none';
+
+const log = (level, ...args) => {
+  const levels = ['none', 'error', 'warn', 'info'];
+  if (levels.indexOf(level) <= levels.indexOf(DEBUG_LEVEL)) {
+    if (level === 'error') {
+      console.error(...args);
+    } else if (level === 'warn') {
+      console.warn(...args);
+    } else if (level === 'info') {
+      console.log(...args);
+    }
+  }
+};
+
 export async function getStaticProps() {
   const events = await getEventData();
   return {
@@ -59,9 +74,10 @@ export default function Home({ data }) {
     categories.sort();
     setEventCategoryList(["All", ...categories]);
 
-    const filteredEvents = events.filter(
-      (event) => category === "All" || event.extendedProps.category === category
-    );
+    const filteredEvents = events
+      .filter((event) => category === "All" || event.extendedProps.category === category)
+      .sort((a, b) => new Date(a.start) - new Date(b.start)); // Sort by date and start time in ascending order
+
     setFilteredEvents(filteredEvents);
     updateEventTable(filteredEvents);
   }, [category, events]);
@@ -179,21 +195,29 @@ export default function Home({ data }) {
   };
      
   const handleEventClick = (info) => {
-    const event = info.event;
-    // Extract event information
-    var { title, start, end, extendedProps } = event;
-    // Extract extended properties
-    var { category, location, cost, additional_information } = extendedProps;
-  
-    // Format the date
+    log('info', "🔍 Event Clicked (Raw FullCalendar Event):", info.event);
+
+    const { title, start, end, extendedProps } = info.event;
+
+    log('info', "📌 Event Raw Start:", start);
+    log('info', "📌 Event Raw End:", end);
+
     let formattedStartDate = FormatDate(start);
     let formattedEndDate = FormatDate(end);
-    //check for null for non-string items
-    if (formattedStartDate ? formattedStartDate = formattedStartDate.toString() : "");
-    if (formattedEndDate ? formattedEndDate = formattedEndDate.toString() : "");
-    if (cost ? cost = cost.toString() : "");
-  
-    setEventInfo({ title, formattedStartDate, formattedEndDate, category, location, cost, additional_information });
+
+    log('info', "✅ Formatted Start:", formattedStartDate);
+    log('info', "✅ Formatted End:", formattedEndDate);
+
+    setEventInfo({ 
+      title, 
+      formattedStartDate, 
+      formattedEndDate, 
+      category: extendedProps?.category, 
+      location: extendedProps?.location, 
+      cost: extendedProps?.cost, 
+      additional_information: extendedProps?.additional_information 
+    });
+
     setIsOpen(true);
   };
   
@@ -231,6 +255,8 @@ export default function Home({ data }) {
 
   const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  log('info', "User's Local Timezone:", currentTimeZone);
+
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
       <Head>
@@ -241,6 +267,9 @@ export default function Home({ data }) {
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
+      <div>
+        <h3>Current Timezone: {currentTimeZone}</h3>
+      </div>
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <h1>SWVA</h1>
         <h2>CAMPS & ACTIVITIES</h2>
@@ -285,11 +314,11 @@ export default function Home({ data }) {
           eventClick={handleEventClick}
           navLinks={true}
           buttonText={buttonOptions}
-          displayEventTime={false}
+          displayEventTime={true} // Ensure event time is displayed
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
-          timeZone='local' // Use local timezone
+          timeZone='local' // Ensure FullCalendar uses local timezone
         />
         <Modal
           isOpen={isOpen}
@@ -331,19 +360,13 @@ const eventRenderStyle = {
 };
 
 function FormatDate(rawDate) {
-  let formattedDate = '';
-  if (rawDate) {
-    const date = moment.utc(rawDate); // Use UTC to parse the date
-    if (date.isValid()) {
-      formattedDate = date.local().format('ddd MM-DD-YY hh:mm a'); // Convert to local time
-    } else {
-      formattedDate = "Invalid Date";
-    }
-  } else {
-    //No Date Provided - Render Null
-    formattedDate = "";
-  }
-  return formattedDate;
+  if (!rawDate) return "";
+
+  const utcDate = moment.utc(rawDate); // Read as UTC
+  log('info', "⏰ Raw UTC Date (Before Conversion):", rawDate);
+  log('info', "⏰ Converted Local Date:", utcDate.local().format());
+
+  return utcDate.local().format("ddd MM-DD-YY hh:mm a"); // Convert to local for display
 }
 
 // A custom render function
@@ -383,36 +406,37 @@ async function getEventData() {
     const result = await response.json();
 
     var dbevents = result.mappedData;
-    //remove header row from sheet
     if (dbevents) {
-      dbevents.shift();
+      dbevents.shift(); // Remove header row if necessary
     }
-    dbevents.forEach(item => {
-      var startDate = new Date(item.start_date);
-      var endDate = item.end_date ? new Date(item.end_date) : startDate;
 
-      if (isNaN(startDate) || isNaN(endDate)) {
-        console.error('Invalid date value:', item);
-        return;
-      }
+    dbevents.forEach((item) => {
+      let startDate = moment(item.start_date, "M/D/YYYY h:mm A").utc(); // Convert to UTC
+      let endDate = item.end_date ? moment(item.end_date, "M/D/YYYY h:mm A").utc() : startDate;
+
+      log('info', "🔍 Parsing Event:", item);
+      log('info', "🌍 Parsed UTC Start:", startDate.format());
+      log('info', "�� Parsed UTC End:", endDate.format());
 
       var newItem = {
         title: item.event_name,
-        start: moment(startDate).local().format(),
-        end: moment(endDate).local().format(),
+        start: startDate.toISOString(),  // Store in UTC
+        end: endDate.toISOString(),  // Store in UTC
         extendedProps: {
           category: item.category,
           location: item.location,
           cost: item.cost,
           additional_information: item.additional_information
-        }
+        },
       };
+
       events.push(newItem);
     });
+
     return events;
 
   } catch (error) {
-    console.error('Error fetching event data:', error);
+    log('error', "🚨 Error fetching event data:", error);
     return [];
   }
 }
