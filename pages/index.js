@@ -196,18 +196,28 @@ export default function Home({ data }) {
      
   const handleEventClick = (info) => {
     log('info', "🔍 Event Clicked (Raw FullCalendar Event):", info.event);
-
+  
     const { title, start, end, extendedProps } = info.event;
-
-    log('info', "📌 Event Raw Start:", start);
-    log('info', "📌 Event Raw End:", end);
-
-    let formattedStartDate = FormatDate(start);
-    let formattedEndDate = FormatDate(end);
-
-    log('info', "✅ Formatted Start:", formattedStartDate);
-    log('info', "✅ Formatted End:", formattedEndDate);
-
+  
+    if (start) {
+      log('info', "📌 Event Raw Start (UTC):", start.toISOString());
+    } else {
+      log('warn', "⚠️ Event Start is null or undefined");
+    }
+  
+    if (end) {
+      log('info', "📌 Event Raw End (UTC):", end.toISOString());
+    } else {
+      log('warn', "⚠️ Event End is null or undefined");
+    }
+  
+    // Convert only for display in modal (FullCalendar still uses UTC)
+    let formattedStartDate = start ? moment.utc(start).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
+    let formattedEndDate = end ? moment.utc(end).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
+  
+    log('info', "✅ Formatted Local Start:", formattedStartDate);
+    log('info', "✅ Formatted Local End:", formattedEndDate);
+  
     setEventInfo({ 
       title, 
       formattedStartDate, 
@@ -217,7 +227,7 @@ export default function Home({ data }) {
       cost: extendedProps?.cost, 
       additional_information: extendedProps?.additional_information 
     });
-
+  
     setIsOpen(true);
   };
   
@@ -318,7 +328,7 @@ export default function Home({ data }) {
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
-          timeZone='local' // Ensure FullCalendar uses local timezone
+          timeZone='local' // Ensure FullCalendar uses UTC
         />
         <Modal
           isOpen={isOpen}
@@ -362,11 +372,13 @@ const eventRenderStyle = {
 function FormatDate(rawDate) {
   if (!rawDate) return "";
 
-  const utcDate = moment.utc(rawDate); // Read as UTC
-  log('info', "⏰ Raw UTC Date (Before Conversion):", rawDate);
-  log('info', "⏰ Converted Local Date:", utcDate.local().format());
+  // Explicitly parse as UTC
+  const utcMoment = moment.utc(rawDate);
 
-  return utcDate.local().format("ddd MM-DD-YY hh:mm a"); // Convert to local for display
+  log('info', "⏰ Raw UTC Date (Before Conversion):", rawDate);
+  log('info', "⏰ Converted Local Date:", utcMoment.local().format());
+
+  return utcMoment.local().format("ddd MM-DD-YY hh:mm a"); // Convert to local for display
 }
 
 // A custom render function
@@ -414,14 +426,16 @@ async function getEventData() {
       let startDate = moment(item.start_date, "M/D/YYYY h:mm A").utc(); // Convert to UTC
       let endDate = item.end_date ? moment(item.end_date, "M/D/YYYY h:mm A").utc() : startDate;
 
-      log('info', "🔍 Parsing Event:", item);
-      log('info', "🌍 Parsed UTC Start:", startDate.format());
-      log('info', "�� Parsed UTC End:", endDate.format());
+      log('info', "🔍 Parsed Event (UTC):", {
+        title: item.event_name,
+        startUTC: startDate.format(),
+        endUTC: endDate.format(),
+      });
 
       var newItem = {
         title: item.event_name,
-        start: startDate.toISOString(),  // Store in UTC
-        end: endDate.toISOString(),  // Store in UTC
+        start: startDate.toISOString(),  // Store as UTC
+        end: endDate.toISOString(),  // Store as UTC
         extendedProps: {
           category: item.category,
           location: item.location,
