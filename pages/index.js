@@ -365,7 +365,7 @@ async function getEventData() {
   const events = [];
 
   try {
-    const response = await fetch(`./api/sheets`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sheets`);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
@@ -378,16 +378,17 @@ async function getEventData() {
     }
     dbevents.forEach(item => {
       var startDate = new Date(item.start_date);
-      var endDate;
-      if (item.end_date) {
-        endDate = new Date(item.end_date);
-      } else {
-        endDate = startDate;
+      var endDate = item.end_date ? new Date(item.end_date) : startDate;
+
+      if (isNaN(startDate) || isNaN(endDate)) {
+        console.error('Invalid date value:', item);
+        return;
       }
+
       var newItem = {
         title: item.event_name,
-        start: startDate,
-        end: endDate,
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
         extendedProps: {
           category: item.category,
           location: item.location,
