@@ -149,10 +149,10 @@ export default function Home({ data }) {
         .map((eventItemByCategory) => (
           <TableRow key={eventItemByCategory?.title}>
             <TableCell>{eventItemByCategory?.title}</TableCell>
-            <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY')}</TableCell>
-            <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY')}</TableCell>
-            <TableCell>{moment(eventItemByCategory?.start).format('h:mm A')}</TableCell>
-            <TableCell>{moment(eventItemByCategory?.end).format('h:mm A')}</TableCell>
+            <TableCell>{moment.utc(eventItemByCategory?.start).local().format('MM-DD-YYYY')}</TableCell>
+            <TableCell>{moment.utc(eventItemByCategory?.end).local().format('MM-DD-YYYY')}</TableCell>
+            <TableCell>{moment.utc(eventItemByCategory?.start).local().format('h:mm A')}</TableCell>
+            <TableCell>{moment.utc(eventItemByCategory?.end).local().format('h:mm A')}</TableCell>
             <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
             <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
             <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
@@ -328,7 +328,7 @@ export default function Home({ data }) {
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
-          timeZone='UTC' // Ensure FullCalendar uses UTC
+          timeZone='UTC'  // Ensure FullCalendar reads event times as UTC
         />
         <Modal
           isOpen={isOpen}
