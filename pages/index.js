@@ -228,9 +228,19 @@ export default function Home({ data }) {
     day: 'Day',
     list: 'List',
   };
-  
+
+  const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
+      <Head>
+        <title>SWVA Event Calendar</title>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+      </Head>
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <h1>SWVA</h1>
         <h2>CAMPS & ACTIVITIES</h2>
@@ -279,6 +289,7 @@ export default function Home({ data }) {
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
+          timeZone='local' // Use local timezone
         />
         <Modal
           isOpen={isOpen}
