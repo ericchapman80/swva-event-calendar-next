@@ -268,33 +268,35 @@ export default function Home({ data }) {
   log('info', "User's Local Timezone:", currentTimeZone);
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}> 
+    <main className={`flex min-h-screen flex-col items-center justify-between p-24`}>
       <Head>
-        <title>SWVA Event Calendar</title>
+        <title>SWVA Sports &  Activities</title>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      <div>
-        <h3>Current Timezone: {currentTimeZone}</h3>
-      </div>
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <h1>SWVA</h1>
-        <h2>CAMPS & ACTIVITIES</h2>
-        <div style={{ display: "flex", justifyContent: "center", height: "8vh" }}>
-          <div>
-            <span>Events By Category: </span>
-            <select onChange={handleCategoryChange} value={category}>
-              {eventCategoryList.map((eventCategory) => (
-                <option key={eventCategory} value={eventCategory}>
-                  {eventCategory}
-                </option>
-              ))}
-            </select>
+        {/*<div className="watermark-container">
+          <img
+            src="/watermark.png"
+            alt="SWVA Watermark"
+            className="watermark-image"
+          />*/}
+          <div style={{ display: "flex", justifyContent: "center", height: "8vh" }}>
+            <div>
+              <h3 style={{ color: 'white' }}><span>Events By Category: </span>
+              <select onChange={handleCategoryChange} value={category}>
+                {eventCategoryList.map((eventCategory) => (
+                  <option key={eventCategory} value={eventCategory}>
+                    {eventCategory}
+                  </option>
+                ))}
+              </select></h3>
+            </div>
           </div>
-        </div>
+        {/*</div>*/}
         <div id="eventTable" style={{ display: 'none'}}>
           <br></br>
           <br></br>

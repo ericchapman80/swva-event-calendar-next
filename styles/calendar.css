@@ -17,12 +17,33 @@ h1 {
 
 .fc-toolbar-title {
     font-weight: bold;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255); /* White color */ /*TODO: Toggle*/
     text-align: center;
   } 
 
   .fc-toolbar-chunk {
     text-align: center;
+  }
+
+  .fc-event-title {
+    white-space: normal !important;  /* Allows text to wrap */
+    overflow: hidden !important;     /* Prevents overflow */
+    text-overflow: ellipsis !important; /* Adds "..." if needed */
+    word-wrap: break-word !important;  /* Breaks long words */
+    display: block !important; /* Ensures the event title behaves correctly */
+  }
+  
+  /* TODO - Toggle to swap black to white - Change background of the entire day row in list view */
+  .fc .fc-list-day {
+    background-color: black !important; /* Set background to black */
+  }
+  
+  /* TODO - Toggle to swap black to white Ensure the inner content (date text) follows the color change */
+  .fc .fc-list-day-cushion {
+    background-color: black !important; /* Set background to black */
+    color: white !important; /* Ensure text is readable */
+    font-weight: bold; /* Make text stand out */
+    text-align: center; /* Centers the text */
   }
 
   :root {

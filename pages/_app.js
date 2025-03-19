@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import CookieConsent from 'react-cookie-consent';
 import Cookies from 'universal-cookie';
 
+import '../styles/globals.css';
+//TODO: Toggle this on or off for gradient background
 import '@fullcalendar/common/main.min.css';
 import '../styles/calendar.css';
 
