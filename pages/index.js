@@ -149,7 +149,7 @@ export default function Home({ data }) {
         .map((eventItemByCategory) => (
           <TableRow key={eventItemByCategory?.title}>
             <TableCell>{eventItemByCategory?.title}</TableCell>
-            <TableCell>{moment(eventItemByCategory?.start).format('MM-DD-YYYY')}</TableCell>
+            <TableCell>{moment(eventItemByCategory?.start).local().format('MM-DD-YYYY')}</TableC  ell>
             <TableCell>{moment(eventItemByCategory?.end).format('MM-DD-YYYY')}</TableCell>
             <TableCell>{moment(eventItemByCategory?.start).format('h:mm A')}</TableCell>
             <TableCell>{moment(eventItemByCategory?.end).format('h:mm A')}</TableCell>
