@@ -212,8 +212,8 @@ export default function Home({ data }) {
     }
   
     // Convert only for display in modal (FullCalendar still uses UTC)
-    let formattedStartDate = start ? FormatDate(start) : "N/A";
-    let formattedEndDate = end ? moment.utc(end).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
+    let formattedStartDate = start ? moment(start).format("ddd MM-DD-YY hh:mm a") : "N/A";
+    let formattedEndDate = end ? moment(end).format("ddd MM-DD-YY hh:mm a") : "N/A";
   
     log('info', "✅ Formatted Local Start:", formattedStartDate);
     log('info', "✅ Formatted Local End:", formattedEndDate);
@@ -330,7 +330,7 @@ export default function Home({ data }) {
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
-          timeZone='UTC' // Ensure FullCalendar uses UTC
+          timeZone='local' // Ensure FullCalendar uses UTC
         />
         <Modal
           isOpen={isOpen}
@@ -425,8 +425,8 @@ async function getEventData() {
     }
 
     dbevents.forEach((item) => {
-      let startDate = moment(item.start_date, "M/D/YYYY h:mm A").utc(); // Convert to UTC
-      let endDate = item.end_date ? moment(item.end_date, "M/D/YYYY h:mm A").utc() : startDate;
+      let startDate = moment(item.start_date, "M/D/YYYY h:mm A"); 
+      let endDate = item.end_date ? moment(item.end_date, "M/D/YYYY h:mm A") : startDate;
 
       log('info', "🔍 Parsed Event (UTC):", {
         title: item.event_name,
