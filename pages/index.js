@@ -212,8 +212,8 @@ export default function Home({ data }) {
     }
   
     // Convert only for display in modal (FullCalendar still uses UTC)
-    let formattedStartDate = start ? moment(start).format("ddd MM-DD-YY hh:mm a") : "N/A";
-    let formattedEndDate = end ? moment(end).format("ddd MM-DD-YY hh:mm a") : "N/A";
+    let formattedStartDate = start ? moment.utc(start).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
+    let formattedEndDate = end ? moment.utc(end).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
   
     log('info', "✅ Formatted Local Start:", formattedStartDate);
     log('info', "✅ Formatted Local End:", formattedEndDate);
@@ -414,30 +414,20 @@ async function getEventData() {
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sheets`);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
+    if (!response.ok) throw new Error(response.statusText);
     const result = await response.json();
 
     var dbevents = result.mappedData;
-    if (dbevents) {
-      dbevents.shift(); // Remove header row if necessary
-    }
+    if (dbevents) dbevents.shift(); // Remove header row if needed
 
     dbevents.forEach((item) => {
-      let startDate = moment(item.start_date, "M/D/YYYY h:mm A"); 
-      let endDate = item.end_date ? moment(item.end_date, "M/D/YYYY h:mm A") : startDate;
-
-      log('info', "🔍 Parsed Event (UTC):", {
-        title: item.event_name,
-        startUTC: startDate.format(),
-        endUTC: endDate.format(),
-      });
+      let startDate = moment.utc(item.start_date, "M/D/YYYY h:mm A");
+      let endDate = item.end_date ? moment.utc(item.end_date, "M/D/YYYY h:mm A") : startDate;
 
       var newItem = {
         title: item.event_name,
-        start: startDate.toISOString(),  // Store as UTC
-        end: endDate.toISOString(),  // Store as UTC
+        start: startDate.toISOString(),  // ISO is UTC
+        end: endDate.toISOString(),
         extendedProps: {
           category: item.category,
           location: item.location,
@@ -450,7 +440,6 @@ async function getEventData() {
     });
 
     return events;
-
   } catch (error) {
     log('error', "🚨 Error fetching event data:", error);
     return [];
