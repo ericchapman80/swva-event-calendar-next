@@ -327,7 +327,7 @@ export default function Home({ data }) {
           eventClick={handleEventClick}
           navLinks={true}
           buttonText={buttonOptions}
-          displayEventTime={false} // Ensure event time is displayed
+          displayEventTime={true} // Ensure event time is displayed
           eventColor={'black'}
           dayMaxEvents={true}
           ref={calendarRef}
