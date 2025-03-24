@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 //import { Combobox } from '@headlessui/react'
 import Image from 'next/image'
 import Head from 'next/head'
-import moment from 'moment';
+//import moment from 'moment';
+import moment from 'moment-timezone';
 import { Inter } from 'next/font/google'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -415,33 +416,34 @@ async function getEventData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sheets`);
     if (!response.ok) throw new Error(response.statusText);
-    const result = await response.json();
 
-    var dbevents = result.mappedData;
-    if (dbevents) dbevents.shift(); // Remove header row if needed
+    const result = await response.json();
+    let dbevents = result.mappedData;
+    if (dbevents) dbevents.shift(); // Remove header row
 
     dbevents.forEach((item) => {
-      let startDate = moment.utc(item.start_date, "M/D/YYYY h:mm A");
-      let endDate = item.end_date ? moment.utc(item.end_date, "M/D/YYYY h:mm A") : startDate;
+      // Parse the Eastern Time input and convert to UTC
+      const startDate = moment.tz(item.start_date, "M/D/YYYY h:mm A", "America/New_York").utc();
+      const endDate = item.end_date
+        ? moment.tz(item.end_date, "M/D/YYYY h:mm A", "America/New_York").utc()
+        : startDate;
 
-      var newItem = {
+      events.push({
         title: item.event_name,
-        start: startDate.toISOString(),  // ISO is UTC
+        start: startDate.toISOString(), // UTC ISO string
         end: endDate.toISOString(),
         extendedProps: {
           category: item.category,
           location: item.location,
           cost: item.cost,
-          additional_information: item.additional_information
+          additional_information: item.additional_information,
         },
-      };
-
-      events.push(newItem);
+      });
     });
 
     return events;
   } catch (error) {
-    log('error', "🚨 Error fetching event data:", error);
+    console.error("🚨 Error fetching event data:", error);
     return [];
   }
 }
