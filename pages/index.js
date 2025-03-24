@@ -125,81 +125,79 @@ export default function Home({ data }) {
   }, []);
     
   const updateEventTable = (categorizedEvents) => {
-    // Check if categorizedEvents exists or is an empty array
-    if (!categorizedEvents || categorizedEvents.length === 0) {
-      return;
-    }
+    if (!categorizedEvents || categorizedEvents.length === 0) return;
   
-    // Render the event information in a modal or populate a div
     const eventTable = document.getElementById('eventTable');
   
     if (category === "All") {
       eventTable.style.display = 'none';
-      return; // no need to render innerHTML
+      return;
+    }
+  
+    const currentDate = new Date();
+  
+    const tableRows = categorizedEvents
+      .filter((eventItemByCategory) => {
+        const eventDate = new Date(eventItemByCategory.start);
+        return (
+          eventItemByCategory.extendedProps?.category === category &&
+          eventDate >= currentDate
+        );
+      })
+      .map((eventItem) => {
+        const { title, start, end, allDay, extendedProps } = eventItem;
+  
+        const hasEndDate = extendedProps?._hasEndDate && !!end;
+  
+        const formattedStartDate = moment.utc(start).local().format('MM-DD-YYYY');
+        const formattedStartTime = !allDay ? moment.utc(start).local().format('h:mm A') : '';
+  
+        const formattedEndDate = hasEndDate ? moment.utc(end).local().format('MM-DD-YYYY') : '';
+        const formattedEndTime = hasEndDate && !allDay ? moment.utc(end).local().format('h:mm A') : '';
+  
+        return (
+          <TableRow key={title}>
+            <TableCell>{title}</TableCell>
+            <TableCell>{formattedStartDate}</TableCell>
+            <TableCell>{formattedEndDate}</TableCell>
+            <TableCell>{formattedStartTime}</TableCell>
+            <TableCell>{formattedEndTime}</TableCell>
+            <TableCell>{extendedProps?.location}</TableCell>
+            <TableCell>{extendedProps?.cost}</TableCell>
+            <TableCell>{extendedProps?.additional_information}</TableCell>
+          </TableRow>
+        );
+      });
+  
+    const root = createRoot(eventTable);
+    if (tableRows.length > 0) {
+      root.render(
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Start</TableCell>
+                <TableCell>End</TableCell>
+                <TableCell>Start Time</TableCell>
+                <TableCell>End Time</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Cost</TableCell>
+                <TableCell>Additional Information</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{tableRows}</TableBody>
+          </Table>
+        </TableContainer>
+      );
+      eventTable.style.display = 'block';
     } else {
-      const currentDate = new Date();
-      // Filter out events that are not in the future
-      const tableRows = categorizedEvents
-        .filter((eventItemByCategory) => {
-          const eventDate = new Date(eventItemByCategory.start);
-          return (
-            eventItemByCategory.extendedProps?.category === category &&
-            eventDate >= currentDate
-          );
-        })
-        .map((eventItemByCategory) => (
-          <TableRow key={eventItemByCategory?.title}>
-          <TableCell>{eventItemByCategory?.title}</TableCell>
-          <TableCell>{moment.utc(eventItemByCategory?.start).local().format('MM-DD-YYYY')}</TableCell>
-          <TableCell>{moment.utc(eventItemByCategory?.end).local().format('MM-DD-YYYY')}</TableCell>
-          <TableCell>
-            {!eventItemByCategory?.allDay
-              ? moment.utc(eventItemByCategory?.start).local().format('h:mm A')
-              : ''}
-          </TableCell>
-          <TableCell>
-            {!eventItemByCategory?.allDay
-              ? moment.utc(eventItemByCategory?.end).local().format('h:mm A')
-              : ''}
-          </TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
-          <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
-        </TableRow>        
-        ));
-  
-      if (tableRows.length > 0) {
-        const root = createRoot(eventTable);
-        root.render(
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Start</TableCell>
-                  <TableCell>End</TableCell>
-                  <TableCell>Start Time</TableCell>
-                  <TableCell>End Time</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Cost</TableCell>
-                  <TableCell>Additional Information</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableRows}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        );
-  
-        eventTable.style.display = 'block';
-      } else {
-        const root = createRoot(eventTable);
-        root.render(
-          <div style={{ textAlign: 'center' }}>No scheduled items for the selected category: {category}</div>
-        );
-        eventTable.style.display = 'block';
-      }
+      root.render(
+        <div style={{ textAlign: 'center' }}>
+          No scheduled items for the selected category: {category}
+        </div>
+      );
+      eventTable.style.display = 'block';
     }
   };
   
@@ -210,12 +208,13 @@ export default function Home({ data }) {
   
     // Handle missing end dates safely
     const hasEnd = !!end;
+    const hasEndDate = extendedProps?._hasEndDate && hasEnd;
   
     const formattedStartDate = moment.utc(start).local().format("MM-DD-YYYY");
     const formattedStartTime = !allDay ? moment.utc(start).local().format("h:mm A") : null;
   
-    const formattedEndDate = hasEnd ? moment.utc(end).local().format("MM-DD-YYYY") : null;
-    const formattedEndTime = hasEnd && !allDay ? moment.utc(end).local().format("h:mm A") : null;
+    const formattedEndDate = hasEndDate ? moment.utc(end).local().format("MM-DD-YYYY") : null;
+    const formattedEndTime = hasEndDate && !allDay ? moment.utc(end).local().format("h:mm A") : null;
   
     setEventInfo({
       title,
@@ -224,6 +223,7 @@ export default function Home({ data }) {
       formattedStartTime,
       formattedEndTime,
       allDay,
+      hasEndDate,
       category: extendedProps?.category,
       location: extendedProps?.location,
       cost: extendedProps?.cost,
@@ -232,7 +232,7 @@ export default function Home({ data }) {
   
     setIsOpen(true);
   };
-    
+        
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -335,28 +335,30 @@ export default function Home({ data }) {
           timeZone='local' // Ensure FullCalendar uses UTC
         />
         <Modal
-        isOpen={isOpen}
-        onRequestClose={closeModal}
-        contentLabel="Event Details"
-        style={modalStyle}
-      >
-        <h3>{eventInfo?.title}</h3>
-        <p>
-        <strong>Start:</strong> {eventInfo?.formattedStartDate} 
-          {!eventInfo?.allDay && eventInfo?.formattedStartTime && ` ${eventInfo.formattedStartTime}`}
-          {eventInfo?.formattedEndDate && (
-            <>
-               <strong> - End:</strong> {eventInfo.formattedEndDate}
-              {!eventInfo?.allDay && eventInfo?.formattedEndTime && ` ${eventInfo.formattedEndTime}`}
-            </>
-          )}
-        </p>
-        <p><strong>Category:</strong> {eventInfo?.category}</p>
-        <p><strong>Location:</strong> {eventInfo?.location}</p>
-        <p><strong>Cost:</strong> {eventInfo?.cost}</p>
-        <p><strong>Additional Info:</strong> {eventInfo?.additional_information}</p>
-        <button onClick={closeModal}>Close</button>
-      </Modal>
+          isOpen={isOpen}
+          onRequestClose={closeModal}
+          contentLabel="Event Details"
+          style={modalStyle}
+        >
+          <h3>{eventInfo?.title}</h3>
+          <p>
+            <strong>Start:</strong> {eventInfo?.formattedStartDate}
+            {!eventInfo?.allDay && eventInfo?.formattedStartTime && ` ${eventInfo.formattedStartTime}`}
+
+            {eventInfo?.hasEndDate && eventInfo?.formattedEndDate && (
+              <>
+                <br />
+                <strong>End:</strong> {eventInfo.formattedEndDate}
+                {!eventInfo?.allDay && eventInfo?.formattedEndTime && ` ${eventInfo.formattedEndTime}`}
+              </>
+            )}
+          </p>
+          <p><strong>Category:</strong> {eventInfo?.category}</p>
+          <p><strong>Location:</strong> {eventInfo?.location}</p>
+          <p><strong>Cost:</strong> {eventInfo?.cost}</p>
+          <p><strong>Additional Info:</strong> {eventInfo?.additional_information}</p>
+          <button onClick={closeModal}>Close</button>
+        </Modal>
 
       </div>
     </main>
@@ -415,39 +417,51 @@ async function getEventData() {
 
     const result = await response.json();
     let dbevents = result.mappedData;
+
     if (dbevents) dbevents.shift(); // Remove header row
 
-    dbevents.forEach((item) => {
+    dbevents.forEach((item, index) => {
       const rawStart = item.start_date?.trim();
       const rawEnd = item.end_date?.trim();
+      const title = item.event_name?.trim();
 
-      const hasTime = rawStart?.includes(':');
+      if (!rawStart || !title) {
+        console.warn(`⛔️ Skipped event at row ${index + 2}: Missing start date or title`, item);
+        return;
+      }
+
+      const hasTime = rawStart.includes(':');
       const hasEndTime = rawEnd?.includes(':');
 
       const startMoment = hasTime
         ? moment.tz(rawStart, "M/D/YYYY h:mm A", "America/New_York")
         : moment.tz(rawStart, "M/D/YYYY", "America/New_York");
 
-      const endMoment = rawEnd
+      if (!startMoment.isValid()) {
+        console.warn(`⛔️ Skipped event at row ${index + 2}: Invalid start date`, item);
+        return;
+      }
+
+      const hasEndDate = !!rawEnd;
+      const endMoment = hasEndDate
         ? (hasEndTime
             ? moment.tz(rawEnd, "M/D/YYYY h:mm A", "America/New_York")
             : moment.tz(rawEnd, "M/D/YYYY", "America/New_York"))
         : startMoment;
 
-      const newItem = {
-        title: item.event_name,
-        start: startMoment.toISOString(), // ✅ safely store as UTC
+      events.push({
+        title,
+        start: startMoment.toISOString(),
         end: endMoment.toISOString(),
-        allDay: !hasTime, // 🟢 important for FullCalendar behavior
+        allDay: !hasTime,
         extendedProps: {
           category: item.category,
           location: item.location,
           cost: item.cost,
           additional_information: item.additional_information,
+          _hasEndDate: hasEndDate // ✅ Inject the flag for easy access later
         },
-      };
-
-      events.push(newItem);
+      });
     });
 
     return events;
