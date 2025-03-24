@@ -149,15 +149,23 @@ export default function Home({ data }) {
         })
         .map((eventItemByCategory) => (
           <TableRow key={eventItemByCategory?.title}>
-            <TableCell>{eventItemByCategory?.title}</TableCell>
-            <TableCell>{moment.utc(eventItemByCategory?.start).local().format('MM-DD-YYYY')}</TableCell>
-            <TableCell>{moment.utc(eventItemByCategory?.end).local().format('MM-DD-YYYY')}</TableCell>
-            <TableCell>{moment.utc(eventItemByCategory?.start).local().format('h:mm A')}</TableCell>
-            <TableCell>{moment.utc(eventItemByCategory?.end).local().format('h:mm A')}</TableCell>
-            <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
-            <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
-            <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
-          </TableRow>
+          <TableCell>{eventItemByCategory?.title}</TableCell>
+          <TableCell>{moment.utc(eventItemByCategory?.start).local().format('MM-DD-YYYY')}</TableCell>
+          <TableCell>{moment.utc(eventItemByCategory?.end).local().format('MM-DD-YYYY')}</TableCell>
+          <TableCell>
+            {!eventItemByCategory?.allDay
+              ? moment.utc(eventItemByCategory?.start).local().format('h:mm A')
+              : ''}
+          </TableCell>
+          <TableCell>
+            {!eventItemByCategory?.allDay
+              ? moment.utc(eventItemByCategory?.end).local().format('h:mm A')
+              : ''}
+          </TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.location}</TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.cost}</TableCell>
+          <TableCell>{eventItemByCategory.extendedProps?.additional_information}</TableCell>
+        </TableRow>        
         ));
   
       if (tableRows.length > 0) {
@@ -194,44 +202,37 @@ export default function Home({ data }) {
       }
     }
   };
-     
+  
   const handleEventClick = (info) => {
     log('info', "🔍 Event Clicked (Raw FullCalendar Event):", info.event);
   
-    const { title, start, end, extendedProps } = info.event;
+    const { title, start, end, extendedProps, allDay } = info.event;
   
-    if (start) {
-      log('info', "📌 Event Raw Start (UTC):", start.toISOString());
-    } else {
-      log('warn', "⚠️ Event Start is null or undefined");
-    }
+    // Handle missing end dates safely
+    const hasEnd = !!end;
   
-    if (end) {
-      log('info', "📌 Event Raw End (UTC):", end.toISOString());
-    } else {
-      log('warn', "⚠️ Event End is null or undefined");
-    }
+    const formattedStartDate = moment.utc(start).local().format("MM-DD-YYYY");
+    const formattedStartTime = !allDay ? moment.utc(start).local().format("h:mm A") : null;
   
-    // Convert only for display in modal (FullCalendar still uses UTC)
-    let formattedStartDate = start ? moment.utc(start).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
-    let formattedEndDate = end ? moment.utc(end).local().format("ddd MM-DD-YY hh:mm a") : "N/A";
+    const formattedEndDate = hasEnd ? moment.utc(end).local().format("MM-DD-YYYY") : null;
+    const formattedEndTime = hasEnd && !allDay ? moment.utc(end).local().format("h:mm A") : null;
   
-    log('info', "✅ Formatted Local Start:", formattedStartDate);
-    log('info', "✅ Formatted Local End:", formattedEndDate);
-  
-    setEventInfo({ 
-      title, 
-      formattedStartDate, 
-      formattedEndDate, 
-      category: extendedProps?.category, 
-      location: extendedProps?.location, 
-      cost: extendedProps?.cost, 
-      additional_information: extendedProps?.additional_information 
+    setEventInfo({
+      title,
+      formattedStartDate,
+      formattedEndDate,
+      formattedStartTime,
+      formattedEndTime,
+      allDay,
+      category: extendedProps?.category,
+      location: extendedProps?.location,
+      cost: extendedProps?.cost,
+      additional_information: extendedProps?.additional_information
     });
   
     setIsOpen(true);
   };
-  
+    
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -334,29 +335,29 @@ export default function Home({ data }) {
           timeZone='local' // Ensure FullCalendar uses UTC
         />
         <Modal
-          isOpen={isOpen}
-          onRequestClose={closeModal}
-          contentLabel="Event Details"
-          style={modalStyle} // Apply custom styles to the modal
-        >
-          <h3>{eventInfo?.title}</h3>
-          <p>
-            <strong>Start:</strong> {eventInfo?.formattedStartDate} - <strong>End:</strong> {eventInfo?.formattedEndDate}
-          </p>
-          <p>
-            <strong>Category:</strong> {eventInfo?.category}
-          </p>
-          <p>
-            <strong>Location:</strong> {eventInfo?.location}
-          </p>
-          <p>
-            <strong>Cost:</strong> {eventInfo?.cost}
-          </p>
-          <p>
-            <strong>Additional Info:</strong> {eventInfo?.additional_information}
-          </p>
-          <button onClick={closeModal}>Close</button>
-        </Modal>
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+        contentLabel="Event Details"
+        style={modalStyle}
+      >
+        <h3>{eventInfo?.title}</h3>
+        <p>
+        <strong>Start:</strong> {eventInfo?.formattedStartDate} 
+          {!eventInfo?.allDay && eventInfo?.formattedStartTime && ` ${eventInfo.formattedStartTime}`}
+          {eventInfo?.formattedEndDate && (
+            <>
+               <strong> - End:</strong> {eventInfo.formattedEndDate}
+              {!eventInfo?.allDay && eventInfo?.formattedEndTime && ` ${eventInfo.formattedEndTime}`}
+            </>
+          )}
+        </p>
+        <p><strong>Category:</strong> {eventInfo?.category}</p>
+        <p><strong>Location:</strong> {eventInfo?.location}</p>
+        <p><strong>Cost:</strong> {eventInfo?.cost}</p>
+        <p><strong>Additional Info:</strong> {eventInfo?.additional_information}</p>
+        <button onClick={closeModal}>Close</button>
+      </Modal>
+
       </div>
     </main>
   );
@@ -384,28 +385,23 @@ function FormatDate(rawDate) {
   return utcMoment.local().format("ddd MM-DD-YY hh:mm a"); // Convert to local for display
 }
 
-// A custom render function
 function renderEventContent(eventInfo) {
-  // Determine the current calendar view
   const calendarView = eventInfo.view.type;
+  const { title, start, allDay } = eventInfo.event;
 
-  // Define the class names for each calendar view
   const dotClassNames = {
     dayGridMonth: "fc-daygrid-dot fc-daygrid-dot-month",
     timeGridWeek: "fc-daygrid-dot fc-daygrid-dot-week",
     timeGridDay: "fc-daygrid-dot fc-daygrid-dot-day",
   };
-
-  // Set the class name for the dot based on the calendar view
   const dotClassName = dotClassNames[calendarView] || "fc-daygrid-dot";
 
-  // Add a hyphen if not in listWeek
-  const eventTitleString = calendarView !== 'listWeek' ? '-' + eventInfo.event.title : eventInfo.event.title;
+  const timeStr = !allDay ? moment.utc(start).local().format("h:mm A") + " - " : "";
 
   return (
     <div style={eventRenderStyle.eventTitle} className="fc-event">
       <div className={dotClassName}></div>
-      {eventTitleString}
+      {timeStr}{title}
     </div>
   );
 }
@@ -422,23 +418,36 @@ async function getEventData() {
     if (dbevents) dbevents.shift(); // Remove header row
 
     dbevents.forEach((item) => {
-      // Parse the Eastern Time input and convert to UTC
-      const startDate = moment.tz(item.start_date, "M/D/YYYY h:mm A", "America/New_York").utc();
-      const endDate = item.end_date
-        ? moment.tz(item.end_date, "M/D/YYYY h:mm A", "America/New_York").utc()
-        : startDate;
+      const rawStart = item.start_date?.trim();
+      const rawEnd = item.end_date?.trim();
 
-      events.push({
+      const hasTime = rawStart?.includes(':');
+      const hasEndTime = rawEnd?.includes(':');
+
+      const startMoment = hasTime
+        ? moment.tz(rawStart, "M/D/YYYY h:mm A", "America/New_York")
+        : moment.tz(rawStart, "M/D/YYYY", "America/New_York");
+
+      const endMoment = rawEnd
+        ? (hasEndTime
+            ? moment.tz(rawEnd, "M/D/YYYY h:mm A", "America/New_York")
+            : moment.tz(rawEnd, "M/D/YYYY", "America/New_York"))
+        : startMoment;
+
+      const newItem = {
         title: item.event_name,
-        start: startDate.toISOString(), // UTC ISO string
-        end: endDate.toISOString(),
+        start: startMoment.toISOString(), // ✅ safely store as UTC
+        end: endMoment.toISOString(),
+        allDay: !hasTime, // 🟢 important for FullCalendar behavior
         extendedProps: {
           category: item.category,
           location: item.location,
           cost: item.cost,
           additional_information: item.additional_information,
         },
-      });
+      };
+
+      events.push(newItem);
     });
 
     return events;
