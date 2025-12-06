@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 function CalendarPage() {
   useEffect(() => {
     async function fetchEvents() {
-      const response = await fetch('./api/sheets');
+      const response = await fetch('/api/sheets');
       const data = await response.json();
 
       const eventArray = data.mappedData.map((event) => ({
