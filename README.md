@@ -4,6 +4,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+Use the latest Node.js LTS release (v24.11.1) for local development. With [nvm](https://github.com/nvm-sh/nvm) installed you can run `nvm use` in the project root to automatically select the recommended version.
+
 First, install the dependencies:
 
 ```bash
