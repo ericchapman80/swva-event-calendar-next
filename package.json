@@ -34,7 +34,7 @@
     "ga-4-react": "^0.1.281",
     "googleapis": "^133.0.0",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.48",
+    "moment-timezone": "^0.6.0",
     "next": "14.2.33",
     "next-transpile-modules": "^10.0.0",
     "npm-run-all2": "^6.0.0",
